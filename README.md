@@ -51,3 +51,18 @@ B4: nhan F5
 ## Dieu kien
 
 Cai san git va .Net 8
+
+## Quy trinh lam viec khi code
+
+B1: Cap nhap code moi nhat
+Run: git pull origin main
+B2: Tao branch moi
+Run: git checkout -b feature/product-crud
+B3: Code va kiem tra
+Run: git status
+B4: add file
+Run: git add .
+B5: commit
+Run: git commit -m "message"
+B6: push lên github
+Run: git push origin feature/product-crud
