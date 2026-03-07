@@ -15,6 +15,7 @@ dotnet ef dbcontext scaffold "Server=.;Database=BirthdayCakeShop;Trusted_Connect
 Program.cs
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+###################################################
 
 # BirthdayCakeShop
 
