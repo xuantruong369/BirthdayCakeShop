@@ -5,11 +5,15 @@ namespace DataAccess.Entities;
 
 public partial class User
 {
+    public int UserId { get; set; }
+
     public string Username { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    public string PasswordHash { get; set; } = null!;
 
-    public string UserRole { get; set; } = null!;
+    public string Role { get; set; } = null!;
 
-    public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
+    public DateTime? CreatedAt { get; set; }
+
+    public virtual Customer? Customer { get; set; }
 }

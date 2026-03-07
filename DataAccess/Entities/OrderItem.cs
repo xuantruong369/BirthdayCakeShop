@@ -3,17 +3,21 @@ using System.Collections.Generic;
 
 namespace DataAccess.Entities;
 
-public partial class OrderDetail
+public partial class OrderItem
 {
-    public int Id { get; set; }
+    public int OrderItemId { get; set; }
 
-    public string? OrderId { get; set; }
+    public int? OrderId { get; set; }
 
-    public string? ProductDetailId { get; set; }
+    public int? ProductDetailId { get; set; }
 
     public int? Quantity { get; set; }
 
     public decimal? UnitPrice { get; set; }
+
+    public string? CakeText { get; set; }
+
+    public decimal? TotalPrice { get; set; }
 
     public virtual Order? Order { get; set; }
 

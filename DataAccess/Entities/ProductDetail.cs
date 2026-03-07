@@ -5,21 +5,23 @@ namespace DataAccess.Entities;
 
 public partial class ProductDetail
 {
-    public string ProductDetailId { get; set; } = null!;
+    public int ProductDetailId { get; set; }
 
-    public string? ProductId { get; set; }
+    public int ProductId { get; set; }
 
     public string? CakeSize { get; set; }
 
     public string? Flavor { get; set; }
 
-    public decimal? Price { get; set; }
+    public decimal Price { get; set; }
 
     public decimal? Discount { get; set; }
 
     public int? Stock { get; set; }
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
-    public virtual Product? Product { get; set; }
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    public virtual Product Product { get; set; } = null!;
 }

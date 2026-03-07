@@ -2,14 +2,8 @@ using DataAccess.Entities;
 
 namespace DataAccess.Interfaces
 {
-    public interface IProductImageRepository
+    public interface IProductImageRepository : IRepository<ProductImage>
     {
-        IEnumerable<ProductImage> GetAll();
-
-        IEnumerable<ProductImage> GetByProduct(string productId);
-
-        void Add(ProductImage image);
-
-        void Delete(int id);
+        Task<IEnumerable<ProductImage>> GetByProduct(int productId);
     }
 }

@@ -2,18 +2,8 @@ using DataAccess.Entities;
 
 namespace DataAccess.Interfaces
 {
-    public interface IProductDetailRepository
+    public interface IProductDetailRepository : IRepository<ProductDetail>
     {
-        IEnumerable<ProductDetail> GetAll();
-
-        ProductDetail GetById(string id);
-
-        IEnumerable<ProductDetail> GetByProduct(string productId);
-
-        void Add(ProductDetail detail);
-
-        void Update(ProductDetail detail);
-
-        void Delete(string id);
+        Task<IEnumerable<ProductDetail>> GetByProduct(int productId);
     }
 }

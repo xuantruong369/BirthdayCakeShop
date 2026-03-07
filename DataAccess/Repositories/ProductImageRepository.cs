@@ -1,45 +1,19 @@
 using DataAccess.Context;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories
 {
-    public class ProductImageRepository : IProductImageRepository
+    public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
     {
-        private readonly BirthdayCakeShopDbContext _context;
+        public ProductImageRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
-        public ProductImageRepository(BirthdayCakeShopDbContext context)
+        public async Task<IEnumerable<ProductImage>> GetByProduct(int productId)
         {
-            _context = context;
-        }
-
-        public IEnumerable<ProductImage> GetAll()
-        {
-            return _context.ProductImages.ToList();
-        }
-
-        public IEnumerable<ProductImage> GetByProduct(string productId)
-        {
-            return _context.ProductImages
-                .Where(i => i.ProductId == productId)
-                .ToList();
-        }
-
-        public void Add(ProductImage image)
-        {
-            _context.ProductImages.Add(image);
-            _context.SaveChanges();
-        }
-
-        public void Delete(int id)
-        {
-            var image = _context.ProductImages.Find(id);
-
-            if (image != null)
-            {
-                _context.ProductImages.Remove(image);
-                _context.SaveChanges();
-            }
+            return await _context.ProductImages
+                .Where(x => x.ProductId == productId)
+                .ToListAsync();
         }
     }
 }

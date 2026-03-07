@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using BusinessLogic.Interfaces;
+using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
 
@@ -8,17 +8,17 @@ namespace Presentation.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IProductService _service;
+    private readonly IProductRepository _product;
 
-    public HomeController(ILogger<HomeController> logger, IProductService service)
+    public HomeController(ILogger<HomeController> logger, IProductRepository product)
     {
         _logger = logger;
-        _service = service;
+        _product = product;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var product = _service.GetProducts();
+        var product = await _product.GetAll();
         return Ok(product);
     }
 

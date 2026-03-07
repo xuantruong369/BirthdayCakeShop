@@ -1,49 +1,18 @@
 using DataAccess.Context;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories
 {
-    public class CustomerRepository : ICustomerRepository
+    public class CustomerRepository : Repository<Customer>, ICustomerRepository
     {
-        private readonly BirthdayCakeShopDbContext _context;
+        public CustomerRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
-        public CustomerRepository(BirthdayCakeShopDbContext context)
+        public async Task<Customer> GetByUserId(int userId)
         {
-            _context = context;
-        }
-
-        public IEnumerable<Customer> GetAll()
-        {
-            return _context.Customers.ToList();
-        }
-
-        public Customer GetById(string id)
-        {
-            return _context.Customers.Find(id);
-        }
-
-        public void Add(Customer customer)
-        {
-            _context.Customers.Add(customer);
-            _context.SaveChanges();
-        }
-
-        public void Update(Customer customer)
-        {
-            _context.Customers.Update(customer);
-            _context.SaveChanges();
-        }
-
-        public void Delete(string id)
-        {
-            var customer = _context.Customers.Find(id);
-
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-                _context.SaveChanges();
-            }
+            return await _context.Customers
+                .FirstOrDefaultAsync(x => x.UserId == userId);
         }
     }
 }

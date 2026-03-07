@@ -1,49 +1,18 @@
 using DataAccess.Context;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
-        private readonly BirthdayCakeShopDbContext _context;
+        public UserRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
-        public UserRepository(BirthdayCakeShopDbContext context)
+        public async Task<User> GetByUsername(string username)
         {
-            _context = context;
-        }
-
-        public IEnumerable<User> GetAll()
-        {
-            return _context.Users.ToList();
-        }
-
-        public User GetByUsername(string username)
-        {
-            return _context.Users.Find(username);
-        }
-
-        public void Add(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-        }
-
-        public void Update(User user)
-        {
-            _context.Users.Update(user);
-            _context.SaveChanges();
-        }
-
-        public void Delete(string username)
-        {
-            var user = _context.Users.Find(username);
-
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
-            }
+            return await _context.Users
+                .FirstOrDefaultAsync(x => x.Username == username);
         }
     }
 }

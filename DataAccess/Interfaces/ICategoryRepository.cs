@@ -2,16 +2,7 @@ using DataAccess.Entities;
 
 namespace DataAccess.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository : IRepository<CakeCategory>
     {
-        IEnumerable<CakeCategory> GetAll();
-
-        CakeCategory GetById(string id);
-
-        void Add(CakeCategory category);
-
-        void Update(CakeCategory category);
-
-        void Delete(string id);
     }
 }
