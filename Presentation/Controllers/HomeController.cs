@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
 
@@ -7,15 +8,18 @@ namespace Presentation.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IProductService _service;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IProductService service)
     {
         _logger = logger;
+        _service = service;
     }
 
     public IActionResult Index()
     {
-        return View();
+        var product = _service.GetProducts();
+        return Ok(product);
     }
 
     public IActionResult Privacy()
