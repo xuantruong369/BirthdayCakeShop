@@ -4,6 +4,6 @@ namespace DataAccess.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
-        Task<User> GetByUsername(string username);
+        Task<User?> GetByUsername(string username);
     }
 }

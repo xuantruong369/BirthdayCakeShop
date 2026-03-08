@@ -4,6 +4,6 @@ namespace DataAccess.Interfaces
 {
     public interface ICartRepository : IRepository<Cart>
     {
-        Task<Cart> GetByCustomerId(int customerId);
+        Task<Cart?> GetByCustomerId(int customerId);
     }
 }

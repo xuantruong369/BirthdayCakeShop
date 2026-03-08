@@ -9,7 +9,7 @@ namespace DataAccess.Repositories
     {
         public PaymentRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
-        public async Task<Payment> GetByOrder(int orderId)
+        public async Task<Payment?> GetByOrder(int orderId)
         {
             return await _context.Payments
                 .FirstOrDefaultAsync(x => x.OrderId == orderId);

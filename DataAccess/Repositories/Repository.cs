@@ -18,7 +18,7 @@ namespace DataAccess.Repositories
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T?> GetById(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

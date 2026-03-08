@@ -7,12 +7,15 @@ namespace DataAccess.Repositories
 {
     public class CartRepository : Repository<Cart>, ICartRepository
     {
-        public CartRepository(BirthdayCakeShopDbContext context) : base(context) { }
+        public CartRepository(BirthdayCakeShopDbContext context) : base(context)
+        {
+        }
 
-        public async Task<Cart> GetByCustomerId(int customerId)
+        public async Task<Cart?> GetByCustomerId(int customerId)
         {
             return await _context.Carts
-                .FirstOrDefaultAsync(x => x.CustomerId == customerId);
+                .Include(c => c.CartItems)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
         }
     }
 }

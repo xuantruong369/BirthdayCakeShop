@@ -4,6 +4,6 @@ namespace DataAccess.Interfaces
 {
     public interface ICustomerRepository : IRepository<Customer>
     {
-        Task<Customer> GetByUserId(int userId);
+        Task<Customer?> GetByUserId(int userId);
     }
 }

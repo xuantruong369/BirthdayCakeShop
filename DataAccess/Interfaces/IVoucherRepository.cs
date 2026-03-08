@@ -4,6 +4,6 @@ namespace DataAccess.Interfaces
 {
     public interface IVoucherRepository : IRepository<Voucher>
     {
-        Task<Voucher> GetByCode(string code);
+        Task<Voucher?> GetByCode(string code);
     }
 }

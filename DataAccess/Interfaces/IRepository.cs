@@ -7,7 +7,7 @@ namespace DataAccess.Interfaces
     {
         Task<IEnumerable<T>> GetAll();
 
-        Task<T> GetById(int id);
+        Task<T?> GetById(int id);
 
         Task Add(T entity);
 

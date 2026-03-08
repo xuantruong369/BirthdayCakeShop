@@ -1,25 +1,36 @@
 using System.Diagnostics;
+using BusinessLogic.Interfaces;
 using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
+using Presentation.ViewModels;
 
 namespace Presentation.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IProductRepository _product;
-
-    public HomeController(ILogger<HomeController> logger, IProductRepository product)
+    private readonly IProductService _service;
+    public HomeController(ILogger<HomeController> logger, IProductService service)
     {
         _logger = logger;
-        _product = product;
+        _service = service;
     }
 
     public async Task<IActionResult> Index()
     {
-        var product = await _product.GetAll();
-        return Ok(product);
+        var product = await _service.GetAllProducts();
+
+        // if (!ModelState.IsValid)
+        // {
+        //     return Ok("False");
+        // }
+
+        var productViewModel = product.Select(p => new ProductViewModel
+        {
+            Name = p.Name
+        }).ToList();
+        return Ok(productViewModel);
     }
 
     public IActionResult Privacy()

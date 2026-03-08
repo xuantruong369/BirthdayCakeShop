@@ -1,8 +1,11 @@
-// using BusinessLogic.Interfaces;
-// using BusinessLogic.Services;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Services;
+using BusinessLogic.Validators;
 using DataAccess.Context;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +31,11 @@ builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 
 
-//builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<ProductDTOValidator>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

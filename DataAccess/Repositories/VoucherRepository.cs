@@ -9,7 +9,7 @@ namespace DataAccess.Repositories
     {
         public VoucherRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
-        public async Task<Voucher> GetByCode(string code)
+        public async Task<Voucher?> GetByCode(string code)
         {
             return await _context.Vouchers
                 .FirstOrDefaultAsync(x => x.VoucherCode == code);
