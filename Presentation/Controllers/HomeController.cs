@@ -17,20 +17,25 @@ public class HomeController : Controller
         _service = service;
     }
 
-    public async Task<IActionResult> Index()
+    // public async Task<IActionResult> Index()
+    // {
+    //     var product = await _service.GetAllProducts();
+
+    //     // if (!ModelState.IsValid)
+    //     // {
+    //     //     return Ok("False");
+    //     // }
+
+    //     var productViewModel = product.Select(p => new ProductViewModel
+    //     {
+    //         Name = p.Name
+    //     }).ToList();
+    //     return Ok(productViewModel);
+    // }
+
+    public IActionResult Index()
     {
-        var product = await _service.GetAllProducts();
-
-        // if (!ModelState.IsValid)
-        // {
-        //     return Ok("False");
-        // }
-
-        var productViewModel = product.Select(p => new ProductViewModel
-        {
-            Name = p.Name
-        }).ToList();
-        return Ok(productViewModel);
+        return View();
     }
 
     public IActionResult Privacy()
