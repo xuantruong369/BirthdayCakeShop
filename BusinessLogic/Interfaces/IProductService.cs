@@ -4,6 +4,6 @@ namespace BusinessLogic.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductListDTO>> GetAllProducts();
+        Task<IEnumerable<ProductListDTO>> GetProducts();
     }
 }

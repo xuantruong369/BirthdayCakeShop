@@ -39,19 +39,6 @@ public class HomeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> ProductList()
-    {
-        var productList = await _service.GetAllProducts();
-
-        var productListView = productList.Select(p => new ProductListViewModel
-        {
-            Name = p.Name,
-            Price = p.Price,
-            ImageUrl = p.ImageUrl
-        });
-        return Ok(productListView);
-    }
-
     public IActionResult Privacy()
     {
         return View();
