@@ -6,18 +6,22 @@ namespace BusinessLogic.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IProductRepository _repo;
-        public ProductService(IProductRepository repo)
+        private readonly IProductRepository _context;
+        public ProductService(IProductRepository context)
         {
-            _repo = repo;
+            _context = context;
         }
-        public async Task<IEnumerable<ProductDTO>> GetAllProducts()
+
+        public async Task<IEnumerable<ProductListDTO>> GetAllProducts()
         {
-            var products = await _repo.GetAll();
-            return products.Select(p => new ProductDTO
+            var products = await _context.GetAllProducts();
+
+            return products.Select(p => new ProductListDTO
             {
-                Id = p.ProductId,
-                Name = p.ProductName
+                Name = p.ProductName,
+                Price = p.ProductDetails.Select(d => d.Price).FirstOrDefault(),
+                ImageUrl = p.ProductImages.Select(d => d.ImageUrl).FirstOrDefault()
+
             });
         }
     }

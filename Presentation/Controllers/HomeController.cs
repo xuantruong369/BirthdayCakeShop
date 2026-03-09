@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using BusinessLogic.Interfaces;
 using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,19 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         return View();
+    }
+
+    public async Task<IActionResult> ProductList()
+    {
+        var productList = await _service.GetAllProducts();
+
+        var productListView = productList.Select(p => new ProductListViewModel
+        {
+            Name = p.Name,
+            Price = p.Price,
+            ImageUrl = p.ImageUrl
+        });
+        return Ok(productListView);
     }
 
     public IActionResult Privacy()

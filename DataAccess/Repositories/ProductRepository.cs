@@ -9,6 +9,14 @@ namespace DataAccess.Repositories
     {
         public ProductRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
+        public async Task<IEnumerable<Product>> GetAllProducts()
+        {
+            return await _context.Products
+                .Include(p => p.ProductDetails)
+                .Include(p => p.ProductImages)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Product>> GetByCategory(int categoryId)
         {
             return await _context.Products

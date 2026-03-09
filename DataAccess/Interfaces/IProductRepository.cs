@@ -5,5 +5,8 @@ namespace DataAccess.Interfaces
     public interface IProductRepository : IRepository<Product>
     {
         Task<IEnumerable<Product>> GetByCategory(int categoryId);
+        //
+        Task<IEnumerable<Product>> GetAllProducts();
+        //
     }
 }
