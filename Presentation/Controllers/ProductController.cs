@@ -13,7 +13,21 @@ namespace Presentation.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetByCategory(int categoryId)
+        {
+            var productList = await _service.GetByCategoryId(categoryId);
+
+            var productListView = productList.Select(p => new ProductListViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl
+            }).ToList();
+            return View(productListView);
+        }
+
+        public async Task<IActionResult> GetProducts()
         {
             var productList = await _service.GetProducts();
 
@@ -24,6 +38,26 @@ namespace Presentation.Controllers
                 ImageUrl = p.ImageUrl
             }).ToList();
             return View(productListView);
+        }
+
+        public async Task<IActionResult> GetProductDetail(int maSP)
+        {
+            var detail = await _service.GetProductDetail(maSP);
+
+            var detailView = new ProductDetailView()
+            {
+                ProductId = detail.ProductId,
+                Id = detail.Id,
+                Name = detail.Name,
+                Description = detail.Description,
+                Thumbnail = detail.Thumbnail,
+                CategoryName = detail.CategoryName,
+                ImageUrls = detail.ImageUrls,
+                CakeSize = detail.CakeSize,
+                Flavor = detail.Flavor,
+                Price = detail.Price
+            };
+            return View(detailView);
         }
     }
 }

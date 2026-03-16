@@ -1,0 +1,23 @@
+@using Presentation.ViewModels
+@model List<CategoryMenuView>
+
+
+<div class="shop-filters">
+    <h5 class="filter-title">Danh mục</h5>
+
+    <div class="filter-group">
+        <ul class="list-unstyled mb-0">
+            @foreach (var item in Model)
+            {
+                <li class="mb-2">
+                    <a asp-controller="Product"
+                       asp-action="GetByCategory"
+                       asp-route-categoryId="@item.CategoryId"
+                       class="text-decoration-none">
+                        @item.CategoryName
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

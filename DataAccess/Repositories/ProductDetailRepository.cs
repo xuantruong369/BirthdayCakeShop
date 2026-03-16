@@ -15,5 +15,12 @@ namespace DataAccess.Repositories
                 .Where(x => x.ProductId == productId)
                 .ToListAsync();
         }
+
+        public async Task<ProductDetail> GetProductDetailById(int? id)
+        {
+            return await _context.ProductDetails
+                .Include(p => p.Product) // Load dữ liệu bảng liên quan
+                .FirstOrDefaultAsync(x => x.ProductDetailId == id); // Tìm theo Id
+        }
     }
 }

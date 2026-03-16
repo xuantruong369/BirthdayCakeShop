@@ -1,0 +1,176 @@
+@* @using Presentation.ViewModels
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model List<ProductAdminView>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Danh sách bánh sinh nhật</h4>
+            <p class="card-description">
+                Bảng hiển thị các sản phẩm bánh sinh nhật
+            </p>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên bánh</th>
+                        <th>Hình ảnh</th>
+                        <th>Giá bán</th>
+                        <th>Loại bánh</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int stt = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@stt</td>
+                            <td>@item.Name</td>
+                            <td>
+                                <img src="@Url.Content("~/Client/img/product/" + @item.ImageUrl)" alt="@item.Name" width="80" height="80"
+                                     style="object-fit: cover; border-radius: 8px;" />
+                            </td>
+                            <td>@item.Price.ToString("N0") VNĐ</td>
+                            <td>@item.CategoryName</td>
+                             <td>
+                            <a asp-action="DeleteProduct" asp-controller="Admin" asp-route-productId="@item.ProductId"
+                            title="Xóa"
+                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này không?');">
+                                <i class="mdi mdi-delete text-danger" style="font-size: 22px;"></i>
+                            </a>
+                </td>
+                        </tr>
+                        stt++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> *@
+
+@using Presentation.ViewModels
+@model List<ProductAdminView>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .product-image {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .product-table th,
+    .product-table td {
+        vertical-align: middle;
+    }
+
+    .action-column {
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .action-icons a {
+        margin: 0 6px;
+        text-decoration: none;
+    }
+
+    .top-actions {
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Danh sách bánh sinh nhật</h4>
+                <p class="card-description">Bảng hiển thị các sản phẩm bánh sinh nhật</p>
+                @if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+
+                <div class="top-actions">
+                    <a asp-action="CreateProduct" asp-controller="Admin" class="btn btn-primary">
+                        Thêm sản phẩm
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered product-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên bánh</th>
+                                <th>Hình ảnh</th>
+                                <th>Giá bán</th>
+                                <th>Loại bánh</th>
+                                <th class="action-column">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int stt = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@stt</td>
+                                    <td>@item.Name</td>
+                                    <td>
+                                        <img src="@Url.Content("~/Client/img/product/" + item.ImageUrl)"
+                                             alt="@item.Name"
+                                             class="product-image" />
+                                    </td>
+                                    <td>@item.Price.ToString("N0") VNĐ</td>
+                                    <td>@item.CategoryName</td>
+                                    <td class="action-column action-icons">
+                                        @* <a asp-action="EditProduct"
+                                           asp-controller="Admin"
+                                           asp-route-productId="@item.ProductId"
+                                           title="Sửa">
+                                            <i class="mdi mdi-pencil text-primary" style="font-size: 22px;"></i>
+                                        </a> *@
+
+                                        <a asp-action="DeleteProduct"
+                                           asp-controller="Admin"
+                                           asp-route-productId="@item.ProductId"
+                                           title="Xóa"
+                                           onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này không?');">
+                                            <i class="mdi mdi-delete text-danger" style="font-size: 22px;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                stt++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

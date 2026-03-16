@@ -1,0 +1,39 @@
+@using Presentation.ViewModels
+ @{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_LayoutShop.cshtml";
+}
+@model List<ProductListViewModel>
+
+@foreach(var item in Model)
+{
+ <!-- Product 6 -->
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="product-card">
+                  <div class="product-image">
+                    <img
+                      src="@Url.Content("~/Client/img/product/" + @item.ImageUrl)"
+                      alt="Bánh Vanilla"
+                    />
+                    <button class="btn-wishlist">
+                      <i class="fas fa-heart"></i>
+                    </button>
+                  </div>
+                  <div class="product-info">
+                    <h5 class="product-name">@item.Name</h5>
+                    <div class="product-rating">
+                      <i class="fas fa-star"></i><i class="fas fa-star"></i
+                      ><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                      <span>(19 review)</span>
+                    </div>
+                    <div class="product-price">
+                      <span class="price">@item.Price</span>
+                    </div>
+                    <a asp-controller="Product" asp-action="GetProductDetail" asp-route-maSp="@item.Id" class="btn btn-view"
+                      >Xem chi tiết</a
+                    >
+                  </div>
+                </div>
+              </div>
+}
+            

@@ -3,15 +3,18 @@ using BusinessLogic.DTOs;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
+using Presentation.ViewModels;
 
 namespace Presentation.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly IAuthService _service;
-        public AuthController(IAuthService service)
+        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+        public AuthController(IAuthService authService, IUserService userService)
         {
-            _service = service;
+            _authService = authService;
+            _userService = userService;
         }
         [HttpGet]
         public IActionResult Login()
@@ -37,14 +40,62 @@ namespace Presentation.Controllers
 
             if (HttpContext.Session.GetString("UserName") == null)
             {
-                var u = await _service.Login(userDTO);
+                var u = await _authService.Login(userDTO);
                 if (u != null)
                 {
                     HttpContext.Session.SetString("UserName", u.Username.ToString());
+                    HttpContext.Session.SetInt32("Id", u.UserId);
+                    if (u.Role == "Admin")
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
                     return RedirectToAction("Index", "Home");
                 }
             }
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("UserName");
+            return RedirectToAction("Login", "Auth");
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterUser registerUser)
+        {
+            var user = new AddUserDTO
+            {
+                Username = registerUser.Username,
+                PasswordHash = registerUser.PasswordHash,
+                CustomerName = registerUser.CustomerName,
+                Phone = registerUser.Phone,
+                Address = registerUser.Address,
+                ConfirmPassword = registerUser.ConfirmPassword
+            };
+
+
+            if (!ModelState.IsValid)
+            {
+                return View(registerUser);
+            }
+
+            var result = await _userService.Register(user);
+
+            if (!result.Success)
+            {
+                ModelState.AddModelError(result.Field, result.Message);
+                return View(registerUser);
+            }
+
+            return RedirectToAction("Login");
         }
     }
 }

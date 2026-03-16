@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using DataAccess.Context;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
@@ -13,6 +14,11 @@ namespace DataAccess.Repositories
         {
             return await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public async Task<bool> UsernameExists(string username)
+        {
+            return await _context.Users.AnyAsync(u => u.Username == username);
         }
     }
 }

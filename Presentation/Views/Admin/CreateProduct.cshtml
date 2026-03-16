@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model CreateProduct
+
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Thêm sản phẩm</h4>
+            <p class="card-description">Nhập thông tin sản phẩm mới</p>
+
+            <form asp-action="CreateProduct" asp-controller="Admin" method="post" enctype="multipart/form-data" class="forms-sample">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="CategoryId">Thể loại</label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                        <option value="">-- Chọn thể loại --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ProductName">Tên sản phẩm</label>
+                    <input asp-for="ProductName" class="form-control" placeholder="Nhập tên sản phẩm">
+                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả sản phẩm"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Price">Giá</label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="Nhập giá sản phẩm">
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Thumbnail">Ảnh đại diện (Thumbnail)</label>
+                    <input asp-for="Thumbnail" type="file" class="form-control" accept="image/*">
+                    <span asp-validation-for="Thumbnail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Images">Ảnh chi tiết sản phẩm</label>
+                    <input asp-for="Images" type="file" class="form-control" accept="image/*" multiple>
+                    <span asp-validation-for="Images" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CakeSize">Kích thước bánh</label>
+                    <input asp-for="CakeSize" class="form-control" placeholder="Ví dụ: 16cm, 20cm">
+                    <span asp-validation-for="CakeSize" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Flavor">Hương vị</label>
+                    <input asp-for="Flavor" class="form-control" placeholder="Ví dụ: Chocolate, Vanilla">
+                    <span asp-validation-for="Flavor" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-gradient-primary me-2">Thêm sản phẩm</button>
+                <a asp-action="ProductList" asp-controller="Admin" class="btn btn-light">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -8,5 +8,8 @@ namespace DataAccess.Interfaces
         //
         Task<IEnumerable<Product>> GetAllProducts();
         //
+        Task<Product> GetProductById(int id);
+        Task<IEnumerable<Product>> GetAllAdminProducts();
+        Task DeleteProduct(int productId);
     }
 }

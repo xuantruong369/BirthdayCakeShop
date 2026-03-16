@@ -34,7 +34,26 @@ public class HomeController : Controller
     //     return Ok(productViewModel);
     // }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
+    {
+        var productList = await _service.GetProducts();
+
+        var productListView = productList.Select(p => new ProductListViewModel
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Price = p.Price,
+            ImageUrl = p.ImageUrl
+        }).ToList();
+        return View(productListView);
+    }
+
+    public IActionResult About()
+    {
+        return View();
+    }
+
+    public IActionResult Contact()
     {
         return View();
     }

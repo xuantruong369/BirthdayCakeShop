@@ -1,0 +1,125 @@
+@using Presentation.ViewModels
+
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Views/Shared/_LayoutClient.cshtml";
+}
+
+@model CheckoutViewModel
+<section class="checkout-section py-5">
+    <div class="container">
+        <h1 class="section-title mb-4">Thanh toán</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                <div>
+                    <form asp-controller="Order" asp-action="ConfirmOrder" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <!-- PHẦN 1: Giữ danh sách sản phẩm (Truyền ngầm) -->
+    @for (int i = 0; i < Model.orderItemViews.Count; i++)
+    {
+        <input type="hidden" name="orderItemViews[@i].ProductDetailId" value="@Model.orderItemViews[i].ProductDetailId" />
+        <input type="hidden" name="orderItemViews[@i].Quantity" value="@Model.orderItemViews[i].Quantity" />
+        <input type="hidden" name="orderItemViews[@i].UnitPrice" value="@Model.orderItemViews[i].UnitPrice" />
+        <input type="hidden" name="orderItemViews[@i].CartItemId" value="@Model.orderItemViews[i].CartItemId" />
+    }
+                        <!-- Thông tin nhận bánh -->
+                        <div class="form-section mb-5">
+                            <h5 class="section-heading">
+                                <span class="step-number">1</span>
+                                Thông tin nhận bánh
+                            </h5>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="DeliveryAddress"></label>
+                                <input asp-for="DeliveryAddress" class="form-control" placeholder="Nhập địa chỉ giao hàng" />
+                                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="DeliveryDate"></label>
+                                <input asp-for="DeliveryDate" type="date" class="form-control" />
+                                <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="DeliveryTimeSlot"></label>
+                                <select asp-for="DeliveryTimeSlot" class="form-control">
+                                    <option value="">-- Chọn khung giờ giao --</option>
+                                    <option value="08:00 - 10:00">08:00 - 10:00</option>
+                                    <option value="10:00 - 12:00">10:00 - 12:00</option>
+                                    <option value="12:00 - 14:00">12:00 - 14:00</option>
+                                    <option value="14:00 - 16:00">14:00 - 16:00</option>
+                                    <option value="16:00 - 18:00">16:00 - 18:00</option>
+                                    <option value="18:00 - 20:00">18:00 - 20:00</option>
+                                </select>
+                                <span asp-validation-for="DeliveryTimeSlot" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="OrderNote"></label>
+                                <textarea asp-for="OrderNote" class="form-control" rows="4" placeholder="Nhập ghi chú cho đơn hàng"></textarea>
+                     
+                            </div>
+                        </div>
+
+                        <!-- Phương thức thanh toán -->
+                        <div class="form-section mb-5">
+                            <h5 class="section-heading">
+                                <span class="step-number">2</span>
+                                Phương thức thanh toán
+                            </h5>
+
+                            <div class="payment-methods-checkout">
+                                <div class="form-check mb-3">
+                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay1" value="COD" />
+                                    <label class="form-check-label" for="pay1">
+                                        <i class="fas fa-money-bill"></i>
+                                        <strong>Thanh toán khi nhận hàng</strong>
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay2" value="BankTransfer" />
+                                    <label class="form-check-label" for="pay2">
+                                        <i class="fas fa-university"></i>
+                                        <strong>Chuyển khoản ngân hàng</strong>
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay3" value="Card" />
+                                    <label class="form-check-label" for="pay3">
+                                        <i class="fas fa-credit-card"></i>
+                                        <strong>Thanh toán qua thẻ tín dụng</strong>
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay4" value="EWallet" />
+                                    <label class="form-check-label" for="pay4">
+                                        <i class="fas fa-wallet"></i>
+                                        <strong>Ví điện tử</strong>
+                                    </label>
+                                </div>
+
+                                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            Hoàn thành đơn hàng
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
