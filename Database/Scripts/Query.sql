@@ -1,5 +1,7 @@
 USE BirthdayCakeShop;
 
+SELECT * 
+FROM ProductImages
 -- SELECT *
 -- FROM Users
 -- -- WHERE UserId = 3;

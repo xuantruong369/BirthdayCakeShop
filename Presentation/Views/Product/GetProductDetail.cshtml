@@ -15,6 +15,8 @@
                   src="@Url.Content("~/Client/img/product/" + @Model.Thumbnail)"
                   id="mainImage"
                   alt="@Model.Name"
+                  width="300px"
+                  height="300px"
                 />
               </div>
               <div class="thumbnail-images">
@@ -25,6 +27,8 @@
                     alt="View 4"
                     class="thumbnail"
                     onclick="changeImage(this)"
+                    width="100px"
+                    height="100px"
                   />
                 }
               </div>
@@ -49,7 +53,7 @@
               </div>
 
               <div class="product-price mb-4">
-                <span class="price-current text-danger h4">@Model.Price</span>
+                <span class="price-current text-danger h4">@Model.Price VNĐ</span>
               </div>
 
               <div class="product-description mb-4">
