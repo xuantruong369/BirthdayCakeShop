@@ -15,11 +15,14 @@ namespace Presentation.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
         private readonly IOrderService _orderService;
-        public AdminController(ICategoryService categoryService, IProductService productService, IOrderService orderService)
+        private readonly ICustomerService _customerService;
+
+        public AdminController(ICategoryService categoryService, IProductService productService, IOrderService orderService, ICustomerService customerService)
         {
             _categoryService = categoryService;
             _productService = productService;
             _orderService = orderService;
+            _customerService = customerService;
         }
         public async Task<IActionResult> OrderList()
         {
@@ -48,24 +51,76 @@ namespace Presentation.Controllers
             }).ToList();
             return View(orderListItemViewModels);
         }
-        public IActionResult Index()
-        {
-            return RedirectToAction("ProductList");
-        }
-        public async Task<IActionResult> ProductList()
+
+        public async Task<IActionResult> Index()
         {
             var products = await _productService.GetAdProducts();
-
-            List<ProductAdminView> productAdminViews = products.Select(item => new ProductAdminView
+            List<AdminGetProducts> productViews = products.Select(item => new AdminGetProducts
             {
                 ProductId = item.ProductId,
-                Name = item.Name,
-                ImageUrl = item.ImageUrl,
+                ProductName = item.Name,
+                Thumbnail = item.ImageUrl,
+                CreatedAt = item.CreatedAt,
+                CategoryId = item.CategoryId,
+                CategoryName = item.CategoryName,
                 Price = item.Price,
-                ShortDescription = item.ShortDescription,
+                Stock = item.Stock
+            }).ToList();
+            return View(productViews);
+        }
+
+        public IActionResult Settings()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> CategoryList()
+        {
+            var categories = await _categoryService.GetCategorys();
+            List<CategoryMenuView> categoryMenuViews = categories.Select(item => new CategoryMenuView
+            {
+                CategoryId = item.CategoryId,
                 CategoryName = item.CategoryName
             }).ToList();
-            return View(productAdminViews);
+            return View(categoryMenuViews);
+        }
+
+        public async Task<IActionResult> CustomerList()
+        {
+            var c = await _customerService.GetCustomers();
+
+            List<CustomerView> customers = c.Select(c => new CustomerView
+            {
+                CustomerId = c.CustomerId,
+                UserId = c.UserId,
+                CustomerName = c.CustomerName,
+                Phone = c.Phone,
+                BirthDate = c.BirthDate,
+                Address = c.Address,
+                Avatar = c.Avatar,
+                CustomerType = c.CustomerType,
+                Username = c.Username,
+                PasswordHash = c.PasswordHash,
+                Role = c.Role,
+                CreatedAt = c.CreatedAt
+            }).ToList();
+
+            return View(customers);
+        }
+
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
+        public IActionResult Reports()
+        {
+            return View();
+        }
+
+        public IActionResult VoucherList()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -98,7 +153,7 @@ namespace Presentation.Controllers
             {
                 return View(model);
             }
-            
+
             if (model.Thumbnail == null || model.Thumbnail.Length == 0)
             {
                 ModelState.AddModelError("Thumbnail", "Vui lòng chọn ảnh thumbnail");
@@ -176,7 +231,7 @@ namespace Presentation.Controllers
                 Flavor = model.Flavor
             });
 
-            return RedirectToAction("ProductList");
+            return RedirectToAction("Index");
         }
 
         public IActionResult GetProducts()
@@ -186,7 +241,7 @@ namespace Presentation.Controllers
 
         public async Task<IActionResult> DeleteProduct(int productId)
         {
-            
+
 
             try
             {
@@ -206,8 +261,43 @@ namespace Presentation.Controllers
                     ModelState.AddModelError("", "Đã xảy ra lỗi hệ thống khi xóa. Vui lòng thử lại.");
                 }
             }
-            return RedirectToAction("ProductList");
-        
+            return RedirectToAction("Index");
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteMultiple([FromBody] List<int> ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                return Json(new { success = false, message = "Không có sản phẩm nào được chọn" });
+            }
+
+            try
+            {
+                foreach (var productId in ids)
+                {
+                    await _productService.DeleteProduct(productId);
+                }
+
+                return Json(new { success = true, message = "Xóa thành công" });
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Không thể xóa vì sản phẩm đang nằm trong giỏ hàng/đơn hàng"
+                    });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    message = "Lỗi hệ thống khi xóa"
+                });
+            }
         }
     }
 }

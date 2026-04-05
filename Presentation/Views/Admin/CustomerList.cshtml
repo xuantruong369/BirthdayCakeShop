@@ -1,0 +1,418 @@
+@using Presentation.ViewModels
+@model List<CustomerView>
+
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+    Layout = "~/Views/Shared/_LayoutUnified.cshtml";
+}
+
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Khách hàng</li>
+        </ol>
+    </nav>
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">Quản lý khách hàng</h1>
+        <p class="page-subtitle">Quản lý thông tin khách hàng và lịch sử mua hàng</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+        <i class="fas fa-filter"></i> Lọc
+    </button>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Tổng khách hàng</p>
+                <h3 class="stat-value">1,250</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Khách hàng mới</p>
+                <h3 class="stat-value">45</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Khách VIP</p>
+                <h3 class="stat-value">89</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters & Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchInput"
+                       placeholder="Tìm theo tên, email hoặc SĐT..." />
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="sexFilter">
+                    <option value="">Tất cả giới tính</option>
+                    <option value="male">Nam</option>
+                    <option value="female">Nữ</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="orderFilter">
+                    <option value="">Tất cả khách</option>
+                    <option value="active">Khách hoạt động</option>
+                    <option value="inactive">Khách không hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100" id="resetFilter">
+                    <i class="fas fa-refresh"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customers Table -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover" id="customersTable">
+            <thead>
+                <tr>
+                    <th>Tên đăng nhập</th>
+                    <th>Tên khách hàng</th>
+                    <th>Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Loại khách hàng</th>
+                    <th>Ngày sinh</th>
+                    <th>Ngày tạo</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <!-- Username with Avatar -->
+                            <td>
+                                <div class="customer-info">
+                                    <div class="customer-avatar">
+                                        @if (!string.IsNullOrEmpty(item.Avatar))
+                                        {
+                                            <img src="@Url.Content("~/Client/img/" + @item.Avatar)" alt="@item.Username"
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            @(item.Username?.Substring(0, 1)?.ToUpper() ?? "K")
+                                        }
+                                    </div>
+                                    <div class="customer-name">
+                                        <strong>@item.Username</strong>
+                                        <br />
+                                        <small class="text-muted">@item.Role</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- Customer Name -->
+                            <td>@(string.IsNullOrEmpty(item.CustomerName) ? "N/A" : item.CustomerName)</td>
+                            <!-- Phone -->
+                            <td>@(string.IsNullOrEmpty(item.Phone) ? "N/A" : item.Phone)</td>
+                            <!-- Address -->
+                            <td>@(string.IsNullOrEmpty(item.Address) ? "N/A" : item.Address)</td>
+                            <!-- Customer Type -->
+                            <td>
+                                <span class="badge bg-info">
+                                    @(string.IsNullOrEmpty(item.CustomerType) ? "Thành viên" : item.CustomerType)
+                                </span>
+                            </td>
+                            <!-- Birth Date -->
+                            <td>@(item.BirthDate.HasValue ? item.BirthDate.Value.ToString("dd/MM/yyyy") : "N/A")</td>
+                            <!-- Created At -->
+                            <td>@(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</td>
+                            <!-- Actions -->
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn btn-sm btn-view" title="Xem chi tiết" data-bs-toggle="modal"
+                                            data-bs-target="#customerDetailModal" onclick="showCustomerDetail(@item.CustomerId)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-edit" title="Chỉnh sửa"
+                                            onclick="editCustomer(@item.CustomerId)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-delete" title="Xóa"
+                                            onclick="deleteCustomer(@item.CustomerId)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <p class="text-muted mb-0">Không có khách hàng nào</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Customer Detail Modal -->
+<div class="modal fade" id="customerDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết khách hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <img id="detailAvatar" src="" alt="Avatar" class="rounded-circle"
+                             style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #d4a574;">
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="fw-bold mb-3">Thông tin cá nhân</h6>
+                        <p><strong>Tên đăng nhập:</strong> <span id="detailUsername"></span></p>
+                        <p><strong>Tên khách hàng:</strong> <span id="detailCustomerName"></span></p>
+                        <p><strong>Email:</strong> <span id="detailUsername"></span></p>
+                        <p><strong>Số điện thoại:</strong> <span id="detailPhone"></span></p>
+                        <p><strong>Ngày sinh:</strong> <span id="detailBirthDate"></span></p>
+                        <p><strong>Địa chỉ:</strong> <span id="detailAddress"></span></p>
+                        <p><strong>Loại khách hàng:</strong> <span id="detailCustomerType" class="badge bg-info"></span>
+                        </p>
+                        <p><strong>Vai trò:</strong> <span id="detailRole" class="badge bg-secondary"></span></p>
+                        <p><strong>Ngày tạo:</strong> <span id="detailCreatedAt"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnEditCustomer" onclick="editCustomer()">Chỉnh
+                    sửa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" href="#">Trước</a>
+            </li>
+            <li class="page-item active">
+                <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">Tiếp</a>
+            </li>
+        </ul>
+    </nav>
+
+    <style>
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #d4a574, #c29456);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4a574, #c29456);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-view,
+        .btn-edit,
+        .btn-delete {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .customer-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+
+    <script>
+        let currentCustomerId = null;
+        let currentCustomerData = null;
+
+        function showCustomerDetail(customerId) {
+            // Find customer in table
+            const rows = document.querySelectorAll('#customersTable tbody tr');
+            let customerData = null;
+
+            // Since we can't directly access model data from JavaScript, we'll populate from visible table cells
+            // This is a workaround - ideally you'd pass JSON data or call an API endpoint
+            rows.forEach(row => {
+                const username = row.querySelector('.customer-name strong')?.textContent;
+                // You could improve this by adding data attributes to rows
+            });
+
+            // For now, show a message that the detail modal should be populated server-side
+            // In a real scenario, you'd call an API or pass JSON data to the modal
+            showCustomerDetailFromData(customerId);
+        }
+
+        function showCustomerDetailFromData(customerId) {
+            // Call API to get customer details
+            fetch(`/Admin/Customer/GetCustomerDetails?id=${customerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const customer = data.customer;
+                        document.getElementById('detailAvatar').src = customer.avatar || 'https://via.placeholder.com/120?text=Avatar';
+                        document.getElementById('detailUsername').textContent = customer.username || 'N/A';
+                        document.getElementById('detailCustomerName').textContent = customer.customerName || 'N/A';
+                        document.getElementById('detailPhone').textContent = customer.phone || 'N/A';
+                        document.getElementById('detailBirthDate').textContent = customer.birthDate ? new Date(customer.birthDate).toLocaleDateString('vi-VN') : 'N/A';
+                        document.getElementById('detailAddress').textContent = customer.address || 'N/A';
+                        document.getElementById('detailCustomerType').textContent = customer.customerType || 'Thành viên';
+                        document.getElementById('detailRole').textContent = customer.role || 'Customer';
+                        document.getElementById('detailCreatedAt').textContent = customer.createdAt ? new Date(customer.createdAt).toLocaleDateString('vi-VN') : 'N/A';
+                        currentCustomerId = customerId;
+                        currentCustomerData = customer;
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    alert('Không thể tải chi tiết khách hàng');
+                });
+        }
+
+        function editCustomer(customerId) {
+            const id = customerId || currentCustomerId;
+            if (!id) {
+                alert('Vui lòng chọn khách hàng');
+                return;
+            }
+            // Redirect to edit page or open edit modal
+            window.location.href = `/Admin/Customer/Edit/${id}`;
+        }
+
+        function deleteCustomer(customerId) {
+            if (confirm('Bạn có chắc muốn xóa khách hàng này?')) {
+                fetch(`/Admin/Customer/DeleteCustomer?id=${customerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Xóa khách hàng thành công');
+                            location.reload();
+                        } else {
+                            alert('Lỗi: ' + (data.message || 'Không thể xóa khách hàng'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert('Không thể xóa khách hàng');
+                    });
+            }
+        }
+
+        // Filter functionality
+        document.getElementById('searchInput').addEventListener('keyup', function (e) {
+            const searchValue = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#customersTable tbody tr');
+            rows.forEach(row => {
+                if (row.querySelector('td:nth-child(8)')) return; // Skip empty rows
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        document.getElementById('resetFilter').addEventListener('click', function () {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sexFilter').value = '';
+            document.getElementById('orderFilter').value = '';
+            const rows = document.querySelectorAll('#customersTable tbody tr');
+            rows.forEach(row => row.style.display = '');
+        });
+    </script>

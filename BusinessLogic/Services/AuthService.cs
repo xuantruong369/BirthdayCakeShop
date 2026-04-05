@@ -24,7 +24,8 @@ namespace BusinessLogic.Services
                     UserId = user.UserId,
                     Username = user.Username,
                     PasswordHash = user.PasswordHash,
-                    Role = user.Role
+                    Role = user.Role,
+                    Avatar = user.Customer.Avatar
                 };
             }
             return null;

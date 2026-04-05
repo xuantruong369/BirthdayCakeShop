@@ -1,0 +1,333 @@
+@using Presentation.ViewModels
+@model List<dynamic>
+
+@{
+    ViewData["Title"] = "Quản lý voucher";
+    Layout = "~/Views/Shared/_LayoutUnified.cshtml";
+}
+
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Vouchers</li>
+        </ol>
+    </nav>
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">Quản lý voucher</h1>
+        <p class="page-subtitle">Tạo và quản lý mã giảm giá cho khách hàng</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVoucherModal">
+        <i class="fas fa-plus"></i> Tạo voucher
+    </button>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon active">
+                <i class="fas fa-tag"></i>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Voucher hoạt động</p>
+                <h3 class="stat-value">18</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon expired">
+                <i class="fas fa-calendar-times"></i>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Voucher hết hạn</p>
+                <h3 class="stat-value">5</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Tổng tiết kiệm</p>
+                <h3 class="stat-value">25M</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters & Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo mã voucher..." />
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="statusFilter">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Hoạt động</option>
+                    <option value="inactive">Không hoạt động</option>
+                    <option value="expired">Hết hạn</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="typeFilter">
+                    <option value="">Tất cả loại</option>
+                    <option value="percentage">Phần trăm</option>
+                    <option value="fixed">Số tiền cố định</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100" id="resetFilter">
+                    <i class="fas fa-refresh"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Vouchers Table -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover" id="vouchersTable">
+            <thead>
+                <tr>
+                    <th>Mã voucher</th>
+                    <th>Tên</th>
+                    <th>Loại</th>
+                    <th>Giá trị</th>
+                    <th>Số lần dùng</th>
+                    <th>Hạn sử dụng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>SUMMER2024</strong></td>
+                    <td>Khuyến mãi hè</td>
+                    <td><span class="badge bg-info">Phần trăm</span></td>
+                    <td>20%</td>
+                    <td>45/100</td>
+                    <td>2024-06-30</td>
+                    <td><span class="badge bg-success">Hoạt động</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa" data-bs-toggle="modal"
+                                    data-bs-target="#editVoucherModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-delete" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>WELCOME50K</strong></td>
+                    <td>Voucher chào mừng</td>
+                    <td><span class="badge bg-warning">Cố định</span></td>
+                    <td>50.000 đ</td>
+                    <td>120/150</td>
+                    <td>2024-05-31</td>
+                    <td><span class="badge bg-success">Hoạt động</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-delete" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>OLDCODE2023</strong></td>
+                    <td>Mã cũ</td>
+                    <td><span class="badge bg-info">Phần trăm</span></td>
+                    <td>10%</td>
+                    <td>250/250</td>
+                    <td>2023-12-31</td>
+                    <td><span class="badge bg-danger">Hết hạn</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-delete" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Voucher Modal -->
+<div class="modal fade" id="addVoucherModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo voucher mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Mã voucher</label>
+                        <input type="text" class="form-control" placeholder="Vd: SUMMER2024" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tên voucher</label>
+                        <input type="text" class="form-control" placeholder="Vd: Khuyến mãi hè" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Loại</label>
+                        <select class="form-control">
+                            <option>Phần trăm (%)</option>
+                            <option>Số tiền cố định (đ)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Giá trị</label>
+                        <input type="number" class="form-control" placeholder="Vd: 20" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số lần dùng tối đa</label>
+                        <input type="number" class="form-control" placeholder="Vd: 100" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ngày hết hạn</label>
+                        <input type="date" class="form-control" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">Tạo voucher</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Voucher Modal -->
+<div class="modal fade" id="editVoucherModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa voucher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Mã voucher</label>
+                        <input type="text" class="form-control" value="SUMMER2024" disabled />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tên voucher</label>
+                        <input type="text" class="form-control" value="Khuyến mãi hè" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Giá trị</label>
+                        <input type="number" class="form-control" value="20" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số lần dùng tối đa</label>
+                        <input type="number" class="form-control" value="100" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ngày hết hạn</label>
+                        <input type="date" class="form-control" value="2024-06-30" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="#">Trước</a>
+        </li>
+        <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">Tiếp</a>
+        </li>
+    </ul>
+</nav>
+
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #d4a574, #c29456);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .stat-icon.active {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .stat-icon.expired {
+        background: linear-gradient(135deg, #dc3545, #fd7e14);
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+</style>

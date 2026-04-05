@@ -6,7 +6,7 @@ using DataAccess.Interfaces;
 
 namespace BusinessLogic.Services
 {
-    public class UserService : IUserService 
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepo;
         private readonly ICustomerRepository _customserRepo;
@@ -15,6 +15,18 @@ namespace BusinessLogic.Services
         {
             _userRepo = userRepository;
             _customserRepo = customerRepository;
+        }
+
+        public async Task<UserDTO> GetUserById(int? userId)
+        {
+            var user = await _userRepo.GetByUserId(userId);
+            return new UserDTO
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash,
+                Role = user.Role
+            };
         }
 
         public async Task<RegisterResultDTO> Register(AddUserDTO addUserDTO)
@@ -40,7 +52,7 @@ namespace BusinessLogic.Services
             };
 
             // 4. Lưu User vào DB trước để lấy ID
-            await _userRepo.Add(newUser); 
+            await _userRepo.Add(newUser);
             // Giả sử trong hàm Add của bạn đã có _context.SaveChangesAsync()
             // Sau dòng này, newUser.Id sẽ tự động có giá trị từ DB.
 
@@ -58,5 +70,16 @@ namespace BusinessLogic.Services
             return new RegisterResultDTO { Success = true };
         }
 
+        public async Task UpdatePassword(UserDTO userDTO)
+        {
+            var user = new User
+            {
+                UserId = userDTO.UserId,
+                Username = userDTO.Username,
+                PasswordHash = userDTO.PasswordHash,
+                Role = userDTO.Role
+            };
+            await _userRepo.Update(user);
+        }
     }
 }

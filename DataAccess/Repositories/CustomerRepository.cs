@@ -9,10 +9,18 @@ namespace DataAccess.Repositories
     {
         public CustomerRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
+        public async Task<IEnumerable<Customer>> GetAllCustomers()
+        {
+            return await _context.Customers
+                .Include(p => p.User)
+                .ToListAsync();
+        }
+
         public async Task<Customer?> GetByUserId(int? userId)
         {
             return await _context.Customers
                 .Include(p => p.Cart)
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(x => x.UserId == userId);
         }
 
@@ -20,7 +28,7 @@ namespace DataAccess.Repositories
         {
             return await _context.Customers
                 .FindAsync(Id);
-                
+
         }
     }
 }

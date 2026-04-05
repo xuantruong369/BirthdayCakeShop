@@ -1,145 +1,257 @@
 @{
-    Layout = null;
+  Layout = null;
+  ViewData["Title"] = "Đăng ký";
 }
 @model RegisterUser
+
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Purple Admin</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="../Admin/vendors/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="../Admin/vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="../Admin/css/style.css">
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="../Admin/images/favicon.ico" />
-  </head>
-  <body>
-    <div class="container-scroller">
-      <div class="container-fluid page-body-wrapper full-page-wrapper">
-        <div class="content-wrapper d-flex align-items-center auth">
-          <div class="row flex-grow">
-            <div class="col-lg-4 mx-auto">
-              <div class="auth-form-light text-left p-5">
-                @* <div class="brand-logo">
-                  <img src="../Admin/images/logo.svg">
-                </div> *@
-                <h4>Bạn là khách mới?</h4>
-                <h6 class="font-weight-light">Đăng ký rất nhanh. Chỉ mất vài bước đơn giản</h6>
-                @* <form class="pt-3">
-                  <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Tên đăng nhập">
-                  </div>
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Họ và tên">
-                  </div>
-                          <div class="form-group">
-                    <input type="tel" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Số điện thoại"  pattern="0[0-9]{9}">
-                  </div>
-                            <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Địa chỉ">
-                  </div>
-                 
-                  <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Mật khẩu">
-                  </div>
-                    <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Xác nhận mật khẩu">
-                  </div>
-                  <div class="mb-4">
-                    <div class="form-check">
-                      <label class="form-check-label text-muted">
-                        <input type="checkbox" class="form-check-input"> Tôi đồng ý với Điều khoản và Điều kiện </label>
-                    </div>
-                  </div>
-                  <div class="mt-3">
-                    <a class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" href="../../index.html">ĐĂNG KÝ</a>
-                  </div>
-                  <div class="text-center mt-4 font-weight-light"> Đã có tài khoản? <a asp-controller="Auth" asp-action="Login" class="text-primary">ĐĂNG NHẬP</a>
-                  </div>
-                </form> *@
+<html lang="vi">
 
-<form asp-action="Register" method="post" class="pt-3">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewData["Title"] - Birthday Cake Shop</title>
+  <link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap"
+  rel="stylesheet">
+  <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    <div class="form-group">
-        <input asp-for="Username" class="form-control form-control-lg" placeholder="Tên đăng nhập">
-        <span asp-validation-for="Username" class="text-danger"></span>
-    </div>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f5f1ed;
+      }
 
-    <div class="form-group">
-        <input asp-for="CustomerName" class="form-control form-control-lg" placeholder="Họ và tên">
-        <span asp-validation-for="CustomerName" class="text-danger"></span>
-    </div>
+      .auth-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f5f1ed 0%, #f9f6f2 100%);
+        padding: 20px;
+      }
 
-    <div class="form-group">
-        <input asp-for="Phone" class="form-control form-control-lg" placeholder="Số điện thoại">
-        <span asp-validation-for="Phone" class="text-danger"></span>
-    </div>
+      .auth-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(212, 165, 116, 0.15);
+        padding: 40px;
+        max-width: 420px;
+        width: 100%;
+        border-top: 4px solid #d4a574;
+      }
 
-    <div class="form-group">
-        <input asp-for="Address" class="form-control form-control-lg" placeholder="Địa chỉ">
-        <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
+      .auth-card h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
 
-    <div class="form-group">
-        <input asp-for="PasswordHash" type="password" class="form-control form-control-lg" placeholder="Mật khẩu">
-        <span asp-validation-for="PasswordHash" class="text-danger"></span>
-    </div>
+      .auth-card .subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 30px;
+        font-weight: 400;
+      }
 
-    <div class="form-group">
-        <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="Xác nhận mật khẩu">
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
+      .form-group {
+        margin-bottom: 16px;
+      }
 
-    <div class="mb-4">
-        <div class="form-check">
-            <label class="form-check-label text-muted">
-                <input type="checkbox" class="form-check-input"> Tôi đồng ý với Điều khoản và Điều kiện
-            </label>
+      .form-group label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1a1a1a;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="password"],
+      .form-group input[type="email"],
+      .form-group input[type="tel"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #d4a574;
+        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .form-row .form-group {
+        margin-bottom: 0;
+      }
+
+      .accept-terms {
+        margin: 20px 0;
+        font-family: 'Poppins', sans-serif;
+        font-size: 13px;
+        color: #666;
+      }
+
+      .accept-terms input[type="checkbox"] {
+        margin-right: 8px;
+      }
+
+      .accept-terms a {
+        color: #d4a574;
+        text-decoration: none;
+      }
+
+      .accept-terms a:hover {
+        text-decoration: underline;
+      }
+
+      .btn-register {
+        width: 100%;
+        padding: 11px 20px;
+        background-color: #d4a574;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .btn-register:hover {
+        background-color: #c29456;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 165, 116, 0.25);
+      }
+
+      .auth-footer {
+        text-align: center;
+        margin-top: 24px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 13px;
+        color: #666;
+      }
+
+      .auth-footer a {
+        color: #d4a574;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+      }
+
+      .auth-footer a:hover {
+        color: #c29456;
+      }
+
+      .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 4px;
+        font-family: 'Poppins', sans-serif;
+        display: block;
+      }
+
+      @@media (max-width: 640px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .auth-card {
+          padding: 30px 20px;
+        }
+
+        .auth-card h1 {
+          font-size: 24px;
+        }
+      }
+  </style>
+</head>
+
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>Đăng Ký Tài Khoản</h1>
+      <p class="subtitle">Tạo tài khoản để bắt đầu mua bánh sinh nhật ngon lành của chúng tôi.</p>
+
+      <form asp-action="Register" method="post">
+        <div class="form-group">
+          <label for="username">Tên đăng nhập</label>
+          <input asp-for="Username" class="form-control" placeholder="Chọn tên đăng nhập của bạn" />
+          <span class="error-message">@Html.ValidationMessageFor(x => x.Username)</span>
         </div>
-    </div>
 
-    <div class="mt-3">
-        <button type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">
-            ĐĂNG KÝ
-        </button>
-    </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerName">Họ và tên</label>
+            <input asp-for="CustomerName" class="form-control" placeholder="Họ và tên đầy đủ" />
+            <span class="error-message">@Html.ValidationMessageFor(x => x.CustomerName)</span>
+          </div>
 
-    <div class="text-center mt-4 font-weight-light">
-        Đã có tài khoản?
-        <a asp-controller="Auth" asp-action="Login" class="text-primary">ĐĂNG NHẬP</a>
-    </div>
-
-</form>
-              </div>
-            </div>
+          <div class="form-group">
+            <label for="phone">Số điện thoại</label>
+            <input asp-for="Phone" class="form-control" placeholder="0123456789" />
+            <span class="error-message">@Html.ValidationMessageFor(x => x.Phone)</span>
           </div>
         </div>
-        <!-- content-wrapper ends -->
+
+        <div class="form-group">
+          <label for="address">Địa chỉ</label>
+          <input asp-for="Address" class="form-control" placeholder="Nhập địa chỉ giao hàng của bạn" />
+          <span class="error-message">@Html.ValidationMessageFor(x => x.Address)</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input asp-for="PasswordHash" type="password" class="form-control" placeholder="Nhập mật khẩu" />
+            <span class="error-message">@Html.ValidationMessageFor(x => x.PasswordHash)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Xác nhận mật khẩu</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu" />
+            <span class="error-message">@Html.ValidationMessageFor(x => x.ConfirmPassword)</span>
+          </div>
+        </div>
+
+        <div class="accept-terms">
+          <label>
+            <input type="checkbox" required /> Tôi đồng ý với
+            <a href="#">Điều khoản sử dụng</a> và
+            <a href="#">Chính sách bảo mật</a>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-register">Đăng Ký Ngay</button>
+      </form>
+
+      <div class="auth-footer">
+        Đã có tài khoản rồi?
+        <a asp-controller="Auth" asp-action="Login">Đăng nhập</a>
       </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
-    <script src="../Admin/vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="../Admin/js/off-canvas.js"></script>
-    <script src="../Admin/js/hoverable-collapse.js"></script>
-    <script src="../Admin/js/misc.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-    <!-- endinject -->
-  </body>
+  </div>
+</body>
+
 </html>

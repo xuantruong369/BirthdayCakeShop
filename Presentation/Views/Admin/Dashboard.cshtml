@@ -1,0 +1,409 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutUnified.cshtml";
+}
+
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </nav>
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Xin chào! Đây là bảng điều khiển quản trị của bạn</p>
+    </div>
+    <div>
+        <button class="btn btn-primary">
+            <i class="fas fa-refresh"></i> Làm mới
+        </button>
+    </div>
+</div>
+
+<!-- Metrics Cards Row -->
+<div class="row mb-4">
+    <!-- Total Orders -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div>
+                    <div class="metric-label">Tổng đơn hàng</div>
+                    <div class="metric-value">1,234</div>
+                </div>
+                <div class="metric-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i> 12% so với tháng trước
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div>
+                    <div class="metric-label">Tổng doanh thu</div>
+                    <div class="metric-value">45.6M</div>
+                </div>
+                <div class="metric-icon" style="background-color: #d4edda; color: var(--success-color);">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i> 8.5% so với tháng trước
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Products -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div>
+                    <div class="metric-label">Tổng sản phẩm</div>
+                    <div class="metric-value">156</div>
+                </div>
+                <div class="metric-icon" style="background-color: #e3f2fd; color: var(--info-color);">
+                    <i class="fas fa-box"></i>
+                </div>
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i> 5 sản phẩm mới
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Customers -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div>
+                    <div class="metric-label">Khách hàng</div>
+                    <div class="metric-value">892</div>
+                </div>
+                <div class="metric-icon" style="background-color: #fce4ec; color: #e91e63;">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i> 23 khách mới
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <!-- Revenue Chart -->
+    <div class="col-lg-8 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Doanh thu theo tháng</h5>
+                <p class="text-muted mb-3">Biểu đồ doanh thu 12 tháng qua</p>
+                @* <canvas id="revenueChart" style="height: 300px;"></canvas> *@
+                <div style="height: 250px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Status Chart -->
+    <div class="col-lg-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Trạng thái đơn hàng</h5>
+                <p class="text-muted mb-3">Phân bổ đơn hàng</p>
+                @* <canvas id="statusChart" style="height: 300px;"></canvas> *@
+                <div style="height: 250px;">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row Charts -->
+<div class="row mb-4">
+    <!-- Top Products -->
+    <div class="col-lg-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Sản phẩm bán chạy</h5>
+                <p class="text-muted mb-3">Top 5 sản phẩm bán chạy nhất</p>
+                @* <canvas id="productsChart" style="height: 300px;"></canvas> *@
+                <div style="height: 250px;">
+                    <canvas id="productsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-lg-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Hoạt động gần đây</h5>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: #d4edda; color: var(--success-color);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-0"><strong>Đơn hàng #12345 hoàn thành</strong></p>
+                            <small class="text-muted">2 phút trước</small>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: #fff3cd; color: var(--warning-color);">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-0"><strong>Bánh Chocolate hết hàng</strong></p>
+                            <small class="text-muted">15 phút trước</small>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: #d1ecf1; color: var(--info-color);">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-0"><strong>Khách hàng mới đăng ký</strong></p>
+                            <small class="text-muted">1 giờ trước</small>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: #f8d7da; color: var(--danger-color);">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-0"><strong>Đơn hàng #12344 bị hủy</strong></p>
+                            <small class="text-muted">3 giờ trước</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Đơn hàng gần đây</h5>
+                    <a asp-controller="Admin" asp-action="OrderList" class="btn btn-sm btn-primary">Xem tất cả</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày đặt</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#12345</strong></td>
+                                <td>Nguyễn Văn A</td>
+                                <td>890,000 VNĐ</td>
+                                <td><span class="badge badge-success">Hoàn thành</span></td>
+                                <td>2024-04-04</td>
+                                <td>
+                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>#12344</strong></td>
+                                <td>Trần Thị B</td>
+                                <td>1,200,000 VNĐ</td>
+                                <td><span class="badge badge-warning">Đang xử lý</span></td>
+                                <td>2024-04-03</td>
+                                <td>
+                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>#12343</strong></td>
+                                <td>Lê Văn C</td>
+                                <td>650,000 VNĐ</td>
+                                <td><span class="badge badge-danger">Đã hủy</span></td>
+                                <td>2024-04-02</td>
+                                <td>
+                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles for Activity List -->
+<style>
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        gap: 1rem;
+        padding: 0.75rem;
+        border-left: 2px solid var(--border-color);
+        padding-left: 1rem;
+    }
+
+    .activity-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-content p {
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+    }
+
+    .badge-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+</style>
+
+<!-- Chart.js Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<script>
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+    type: 'line',
+    data: {
+    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+    datasets: [{
+    label: 'Doanh thu (VNĐ)',
+    data: [2.5, 3.1, 2.8, 4.2, 3.8, 4.5, 5.2, 6.1, 5.8, 6.5, 5.9, 6.2],
+    borderColor: '#d4a574',
+    backgroundColor: 'rgba(212, 165, 116, 0.1)',
+    borderWidth: 2,
+    fill: true,
+    tension: 0.4,
+    pointBackgroundColor: '#d4a574',
+    pointBorderColor: '#fff',
+    pointBorderWidth: 2,
+    pointRadius: 5
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+    legend: {
+    display: false
+    }
+    },
+    scales: {
+    y: {
+    beginAtZero: true,
+    ticks: {
+    callback: function (value) {
+    return value.toFixed(1) + 'M';
+    }
+    }
+    }
+    }
+    }
+    });
+
+    // Order Status Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+    labels: ['Hoàn thành', 'Đang xử lý', 'Chờ giao', 'Hủy'],
+    datasets: [{
+    data: [45, 23, 18, 14],
+    backgroundColor: [
+    '#27ae60',
+    '#f39c12',
+    '#3498db',
+    '#e74c3c'
+    ],
+    borderColor: '#fff',
+    borderWidth: 2
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+    legend: {
+    position: 'bottom'
+    }
+    }
+    }
+    });
+
+    // Top Products Chart
+    const productsCtx = document.getElementById('productsChart').getContext('2d');
+    new Chart(productsCtx, {
+    type: 'bar',
+    data: {
+    labels: ['Bánh Chocolate', 'Bánh Vanilla', 'Bánh Strawberry', 'Bánh Matcha', 'Bánh Caramel'],
+    datasets: [{
+    label: 'Số lượng bán',
+    data: [156, 134, 98, 87, 65],
+    backgroundColor: '#d4a574',
+    borderColor: '#b89968',
+    borderWidth: 1
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+    legend: {
+    display: false
+    }
+    },
+    scales: {
+    y: {
+    beginAtZero: true
+    }
+    }
+    }
+    });
+</script>

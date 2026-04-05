@@ -1,233 +1,254 @@
 ﻿@using Presentation.ViewModels
 @{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_LayoutClient.cshtml";
+  ViewData["Title"] = "Trang chủ";
+  Layout = "~/Views/Shared/_LayoutClient.cshtml";
 }
 @model List<ProductListViewModel>
- <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-title">Bánh Sinh Nhật Tươi Mới Hàng Ngày</h1>
-          <p class="hero-subtitle">
-            Những chiếc bánh handmade chất lượng cao, được làm từ nguyên liệu tự
-            nhiên nhất
-          </p>
-          <div class="hero-buttons">
-            <a asp-controller="Shop" asp-action="Index" class="btn btn-primary btn-lg">Xem cửa hàng</a>
-            <a href="#featured" class="btn btn-secondary btn-lg"
-              >Sản phẩm nổi bật</a
-            >
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Featured Products -->
-    <section id="featured" class="featured-section py-5">
-      <div class="container">
-        <h2 class="section-title text-center mb-5">Sản phẩm nổi bật</h2>
-        <div class="row">
-          @foreach(var item in Model)
-          {
-            <div class="col-lg-3 col-md-6 mb-4">
-              <div class="product-card">
-                <div class="product-image">
-                  <img
-                    src=@Url.Content("~/Client/img/product/" + @item.ImageUrl)
-                    alt="@item.Name"
-                  />
-                  <span class="product-badge">Hot</span>
-                  <button class="btn-wishlist">
-                    <i class="fas fa-heart"></i>
-                  </button>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Bánh Sinh Nhật Tươi Mới Hàng Ngày</h1>
+      <p class="hero-subtitle">Những chiếc bánh handmade chất lượng cao, được làm từ nguyên liệu tự nhiên nhất</p>
+      <div class="hero-buttons">
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary btn-lg">Xem cửa hàng</a>
+        <a href="#featured" class="btn btn-secondary btn-lg">Sản phẩm nổi bật</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section id="featured" class="featured-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">Sản phẩm nổi bật</h2>
+    <div class="row">
+      @if (Model != null && Model.Count > 0)
+      {
+        @foreach (var item in Model)
+        {
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="product-card">
+              <div class="product-image">
+                <img src="@Url.Content("~/Client/img/product/" + @item.ImageUrl)" alt="@item.Name" />
+                <span class="product-badge">Hot</span>
+                <button class="btn-wishlist" title="Thêm vào yêu thích">
+                  <i class="fas fa-heart"></i>
+                </button>
+              </div>
+              <div class="product-info">
+                <h5 class="product-name">@item.Name</h5>
+                <div class="product-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                  <span>(28 đánh giá)</span>
                 </div>
-                <div class="product-info">
-                  <h5 class="product-name">@item.Name</h5>
-                  <div class="product-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span>(28 review)</span>
-                  </div>
-                  <div class="product-price">
-                    <span class="price">@item.Price VNĐ</span>
-                  </div>
-                  <a asp-controller="Product" asp-action="GetProductDetail" asp-route-maSp="@item.Id" class="btn btn-view"
-                    >Xem chi tiết</a
-                  >
+                <div class="product-price">
+                  <span class="price">@item.Price.ToString("N0") VNĐ</span>
+                </div>
+                <a asp-controller="Product" asp-action="GetProductDetail" asp-route-maSp="@item.Id" class="btn btn-view">Xem
+                  chi tiết</a>
                 </div>
               </div>
             </div>
           }
-        </div>
+        }
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Categories Section -->
-    <section class="categories-section py-5 bg-light">
-      <div class="container">
-        <h2 class="section-title text-center mb-5">Danh mục bánh</h2>
-        <div class="row">
-          <div class="col-md-4 mb-4">
-            <div class="category-card">
-              <div class="category-icon">
-                <i class="fas fa-birthday-cake"></i>
-              </div>
-              <h5>Bánh sinh nhật</h5>
-              <p>
-                Những chiếc bánh đặc biệt dành cho ngày sinh nhật thêm phần tươi
-                vui
-              </p>
-              <a asp-controller="Shop" asp-action="Index">Xem sản phẩm</a>
+  <!-- Categories Section -->
+  <section class="categories-section">
+    <div class="container">
+      <h2 class="section-title text-center mb-5">Danh mục bánh</h2>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="fas fa-birthday-cake"></i>
             </div>
-          </div>
-          <div class="col-md-4 mb-4">
-            <div class="category-card">
-              <div class="category-icon">
-                <i class="fas fa-heart"></i>
-              </div>
-              <h5>Bánh Valentine</h5>
-              <p>Bánh lãng mạn dành cho những khoảnh khắc đặc biệt của bạn</p>
-              <a asp-controller="Shop" asp-action="Index">Xem sản phẩm</a>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4">
-            <div class="category-card">
-              <div class="category-icon">
-                <i class="fas fa-gift"></i>
-              </div>
-              <h5>Bánh quà tặng</h5>
-              <p>Những chiếc bánh đẹp mắt cho mỗi dịp lễ tết</p>
-              <a asp-controller="Shop" asp-action="Index">Xem sản phẩm</a>
-            </div>
+            <h5>Bánh sinh nhật</h5>
+            <p>Những chiếc bánh tạo hình đặc biệt, trang trí thành những thế giới kỳ lạ cho ngày sinh nhật đặc biệt.</p>
+            <a asp-controller="Shop" asp-action="Index" class="category-link">Xem sản phẩm</a>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Why Choose Us Section -->
-    <section class="why-choose-us py-5">
-      <div class="container">
-        <h2 class="section-title text-center mb-5">Tại sao chọn chúng tôi</h2>
-        <div class="row">
-          <div class="col-md-3 mb-4 text-center">
-            <div class="feature-box">
-              <div class="feature-icon">
-                <i class="fas fa-leaf"></i>
-              </div>
-              <h5>Nguyên liệu tự nhiên</h5>
-              <p>Sử dụng các nguyên liệu tự nhiên, không hóa chất</p>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="fas fa-layer-group"></i>
             </div>
+            <h5>Bánh tầng cưới</h5>
+            <p>Bánh cưới sang trọng, trang trí tinh tế với những hương vị độc đáo cho ngày cưới hoàn hảo.</p>
+            <a asp-controller="Shop" asp-action="Index" class="category-link">Xem sản phẩm</a>
           </div>
-          <div class="col-md-3 mb-4 text-center">
-            <div class="feature-box">
-              <div class="feature-icon">
-                <i class="fas fa-truck"></i>
-              </div>
-              <h5>Giao hàng nhanh</h5>
-              <p>Giao hàng trong 2-3 giờ ở khu vực thành phố</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="fas fa-cookie"></i>
             </div>
+            <h5>Bánh cupcake</h5>
+            <p>Những chiếc cupcake nhỏ nhắn với hương vị đa dạng, hoàn hảo cho các bữa tiệc nhỏ.</p>
+            <a asp-controller="Shop" asp-action="Index" class="category-link">Xem sản phẩm</a>
           </div>
-          <div class="col-md-3 mb-4 text-center">
-            <div class="feature-box">
-              <div class="feature-icon">
-                <i class="fas fa-shield-alt"></i>
-              </div>
-              <h5>100% an toàn</h5>
-              <p>Sạch sẽ, vệ sinh theo tiêu chuẩn quốc tế</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="fas fa-heart"></i>
             </div>
+            <h5>Bánh Valentine</h5>
+            <p>Bánh lãng mạn dành cho những khoảnh khắc đặc biệt và lãng mạn của bạn.</p>
+            <a asp-controller="Shop" asp-action="Index" class="category-link">Xem sản phẩm</a>
           </div>
-          <div class="col-md-3 mb-4 text-center">
-            <div class="feature-box">
-              <div class="feature-icon">
-                <i class="fas fa-headset"></i>
-              </div>
-              <h5>Hỗ trợ 24/7</h5>
-              <p>Hỗ trợ khách hàng xuyên suốt 24/7</p>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="fas fa-gift"></i>
             </div>
+            <h5>Bánh quà tặng</h5>
+            <p>Những chiếc bánh đẹp mắt cho mỗi dịp lễ tết và các sự kiện đặc biệt.</p>
+            <a asp-controller="Shop" asp-action="Index" class="category-link">Xem sản phẩm</a>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="fas fa-sparkles"></i>
+            </div>
+            <h5>Bánh đặc biệt</h5>
+            <p>Các bánh sáng tạo độc đáo và đặc biệt cho mọi dịp của bạn.</p>
+            <a asp-controller="Shop" asp-action="Index" class="category-link">Xem sản phẩm</a>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials-section py-5 bg-light">
-      <div class="container">
-        <h2 class="section-title text-center mb-5">Đánh giá từ khách hàng</h2>
-        <div class="row">
-          <div class="col-md-4 mb-4">
-            <div class="testimonial-card">
-              <div class="testimonial-star">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-              </div>
-              <p class="testimonial-text">
-                "Bánh rất ngon, tươi và đẹp lắm. Khách mời đều khen không ngớt"
-              </p>
-              <div class="testimonial-author">
-                <strong>Thanh Hương</strong>
-                <small>Khách hàng Hà Nội</small>
-              </div>
+  <!-- Why Choose Us Section -->
+  <section class="why-choose-us">
+    <div class="container">
+      <h2 class="section-title text-center mb-5">Tại sao chọn chúng tôi</h2>
+      <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <h5>Nguyên liệu tự nhiên</h5>
+            <p>Sử dụng các nguyên liệu tự nhiên, không hóa chất hại tới sức khỏe của bạn.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <h5>Giao hàng nhanh</h5>
+            <p>Giao hàng trong 2-3 giờ ở khu vực thành phố, đảm bảo bánh tươi ngon.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h5>100% an toàn</h5>
+            <p>Sạch sẽ, vệ sinh theo tiêu chuẩn quốc tế, được cấp phép hoạt động.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h5>Hỗ trợ 24/7</h5>
+            <p>Hỗ trợ khách hàng xuyên suốt 24/7, giải đáp mọi thắc mắc của bạn.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Testimonials Section -->
+  <section class="testimonials-section py-5 bg-light">
+    <div class="container">
+      <h2 class="section-title text-center mb-5">Đánh giá từ khách hàng</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="testimonial-card">
+            <div class="testimonial-star">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Bánh rất ngon, tươi và đẹp lắm. Khách mời đều khen không ngớt"
+            </p>
+            <div class="testimonial-author">
+              <strong>Thanh Hương</strong>
+              <small>Khách hàng Hà Nội</small>
             </div>
           </div>
-          <div class="col-md-4 mb-4">
-            <div class="testimonial-card">
-              <div class="testimonial-star">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-              </div>
-              <p class="testimonial-text">
-                "Dịch vụ tuyệt vời, giao hàng đúng giờ, bánh vẫn tươi. Sẽ order
-                lại"
-              </p>
-              <div class="testimonial-author">
-                <strong>Minh Tâm</strong>
-                <small>Khách hàng TP.HCM</small>
-              </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="testimonial-card">
+            <div class="testimonial-star">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Dịch vụ tuyệt vời, giao hàng đúng giờ, bánh vẫn tươi. Sẽ order
+              lại"
+            </p>
+            <div class="testimonial-author">
+              <strong>Minh Tâm</strong>
+              <small>Khách hàng TP.HCM</small>
             </div>
           </div>
-          <div class="col-md-4 mb-4">
-            <div class="testimonial-card">
-              <div class="testimonial-star">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-              </div>
-              <p class="testimonial-text">
-                "Vị bánh tuyệt tuyệt, chất lượng đảm bảo. Không tìm được chỗ
-                khác tốt hơn"
-              </p>
-              <div class="testimonial-author">
-                <strong>Phương Anh</strong>
-                <small>Khách hàng Đà Nẵng</small>
-              </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="testimonial-card">
+            <div class="testimonial-star">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              "Vị bánh tuyệt tuyệt, chất lượng đảm bảo. Không tìm được chỗ
+              khác tốt hơn"
+            </p>
+            <div class="testimonial-author">
+              <strong>Phương Anh</strong>
+              <small>Khách hàng Đà Nẵng</small>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter-section py-5">
-      <div class="container text-center">
-        <h2 class="mb-3">Nhận tặng 10% cho đơn hàng đầu tiên</h2>
-        <p class="mb-4">
-          Đăng ký nhận bản tin của chúng tôi để nhận các ưu đãi độc quyền
-        </p>
-        <form class="newsletter-form">
-          <input type="email" placeholder="Nhập email của bạn" required />
-          <button type="submit" class="btn btn-primary">Đăng ký</button>
-        </form>
-      </div>
-    </section>
+  <!-- Newsletter Section -->
+  <section class="newsletter-section py-5">
+    <div class="container text-center">
+      <h2 class="mb-3">Nhận tặng 10% cho đơn hàng đầu tiên</h2>
+      <p class="mb-4">
+        Đăng ký nhận bản tin của chúng tôi để nhận các ưu đãi độc quyền
+      </p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Nhập email của bạn" required />
+        <button type="submit" class="btn btn-primary">Đăng ký</button>
+      </form>
+    </div>
+  </section>

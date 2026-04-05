@@ -1,125 +1,560 @@
 @using Presentation.ViewModels
 
-
 @{
     ViewData["Title"] = "Thanh toán";
     Layout = "~/Views/Shared/_LayoutClient.cshtml";
 }
 
 @model CheckoutViewModel
-<section class="checkout-section py-5">
-    <div class="container">
-        <h1 class="section-title mb-4">Đặt hàng</h1>
-        <div class="row">
-            <div class="col-lg-8">
-                <div>
-                    <form asp-controller="Order" asp-action="ConfirmOrder" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <!-- PHẦN 1: Giữ danh sách sản phẩm (Truyền ngầm) -->
-    @for (int i = 0; i < Model.orderItemViews.Count; i++)
-    {
-        <input type="hidden" name="orderItemViews[@i].ProductDetailId" value="@Model.orderItemViews[i].ProductDetailId" />
-        <input type="hidden" name="orderItemViews[@i].Quantity" value="@Model.orderItemViews[i].Quantity" />
-        <input type="hidden" name="orderItemViews[@i].UnitPrice" value="@Model.orderItemViews[i].UnitPrice" />
-        <input type="hidden" name="orderItemViews[@i].CartItemId" value="@Model.orderItemViews[i].CartItemId" />
+<style>
+    .checkout-section {
+        padding: 60px 0;
+        min-height: calc(100vh - 400px);
+        background: #f9f6f2;
     }
-                        <!-- Thông tin nhận bánh -->
-                        <div class="form-section mb-5">
-                            <h5 class="section-heading">
-                                <span class="step-number">1</span>
-                                Thông tin nhận bánh
-                            </h5>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="DeliveryAddress"></label>
-                                <input asp-for="DeliveryAddress" class="form-control" placeholder="Nhập địa chỉ giao hàng" />
-                                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
-                            </div>
+    .checkout-container {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 30px;
+    }
 
-                            <div class="form-group mb-3">
-                                <label asp-for="DeliveryDate"></label>
-                                <input asp-for="DeliveryDate" type="date" class="form-control" />
-                                <span asp-validation-for="DeliveryDate" class="text-danger"></span>
-                            </div>
+    .checkout-header {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin-bottom: 40px;
+    }
 
-                            <div class="form-group mb-3">
-                                <label asp-for="DeliveryTimeSlot"></label>
-                                <select asp-for="DeliveryTimeSlot" class="form-control">
-                                    <option value="">-- Chọn khung giờ giao --</option>
-                                    <option value="08:00 - 10:00">08:00 - 10:00</option>
-                                    <option value="10:00 - 12:00">10:00 - 12:00</option>
-                                    <option value="12:00 - 14:00">12:00 - 14:00</option>
-                                    <option value="14:00 - 16:00">14:00 - 16:00</option>
-                                    <option value="16:00 - 18:00">16:00 - 18:00</option>
-                                    <option value="18:00 - 20:00">18:00 - 20:00</option>
-                                </select>
-                                <span asp-validation-for="DeliveryTimeSlot" class="text-danger"></span>
-                            </div>
+    .checkout-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+    }
 
-                            <div class="form-group mb-3">
-                                <label asp-for="OrderNote"></label>
-                                <textarea asp-for="OrderNote" class="form-control" rows="4" placeholder="Nhập ghi chú cho đơn hàng"></textarea>
-                     
-                            </div>
-                        </div>
+    .checkout-subtitle {
+        color: #999;
+        font-size: 16px;
+    }
 
-                        <!-- Phương thức thanh toán -->
-                        <div class="form-section mb-5">
-                            <h5 class="section-heading">
-                                <span class="step-number">2</span>
-                                Phương thức thanh toán
-                            </h5>
+    /* Progress Steps */
+    .progress-steps {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 40px;
+        grid-column: 1 / -1;
+        justify-content: center;
+    }
 
-                            <div class="payment-methods-checkout">
-                                <div class="form-check mb-3">
-                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay1" value="COD" />
-                                    <label class="form-check-label" for="pay1">
-                                        <i class="fas fa-money-bill"></i>
-                                        <strong>Thanh toán khi nhận hàng</strong>
-                                    </label>
-                                </div>
+    .progress-step {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: #ccc;
+        font-weight: 600;
+    }
 
-                                <div class="form-check mb-3">
-                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay2" value="BankTransfer" />
-                                    <label class="form-check-label" for="pay2">
-                                        <i class="fas fa-university"></i>
-                                        <strong>Chuyển khoản ngân hàng</strong>
-                                    </label>
-                                </div>
+    .progress-step.active {
+        color: #d4a574;
+    }
 
-                                <div class="form-check mb-3">
-                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay3" value="Card" />
-                                    <label class="form-check-label" for="pay3">
-                                        <i class="fas fa-credit-card"></i>
-                                        <strong>Thanh toán qua thẻ tín dụng</strong>
-                                    </label>
-                                </div>
+    .progress-step.completed {
+        color: #27ae60;
+    }
 
-                                <div class="form-check mb-3">
-                                    <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay4" value="EWallet" />
-                                    <label class="form-check-label" for="pay4">
-                                        <i class="fas fa-wallet"></i>
-                                        <strong>Ví điện tử</strong>
-                                    </label>
-                                </div>
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f5f1ed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+    }
 
-                                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
-                            </div>
-                        </div>
+    .progress-step.active .step-circle {
+        background: #d4a574;
+        color: white;
+    }
 
+    .progress-step.completed .step-circle {
+        background: #27ae60;
+        color: white;
+    }
 
+    .step-connector {
+        width: 40px;
+        height: 2px;
+        background: #e0e0e0;
+        margin: 0 -5px;
+    }
 
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">
-                            Hoàn thành đơn hàng
-                        </button>
-                    </form>
-                </div>
+    .progress-step.completed~.step-connector {
+        background: #27ae60;
+    }
+
+    /* Form Sections */
+    .form-section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-family: 'Playfair Display', serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f5f1ed;
+    }
+
+    .step-number {
+        width: 35px;
+        height: 35px;
+        background: #d4a574;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+        font-size: 15px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: white;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="date"]:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #d4a574;
+        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        background: white;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .text-danger {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    /* Payment Methods */
+    .payment-methods-checkout {
+        display: grid;
+        gap: 15px;
+    }
+
+    .form-check {
+        margin-bottom: 0 !important;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        margin-top: 4px;
+        cursor: pointer;
+        accent-color: #d4a574;
+    }
+
+    .form-check-label {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 20px;
+        background: #f5f1ed;
+        border-radius: 6px;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+        cursor: pointer;
+        margin-bottom: 0 !important;
+    }
+
+    .form-check-input:checked~.form-check-label,
+    .form-check-label:hover {
+        background: #f9f6f2;
+        border-color: #d4a574;
+    }
+
+    .form-check-label i {
+        font-size: 22px;
+        color: #d4a574;
+        width: 25px;
+        text-align: center;
+    }
+
+    .form-check-label strong {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    /* Submit Button */
+    .submit-button {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #d4a574 0%, #c29456 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(212, 165, 116, 0.3);
+    }
+
+    /* Order Summary Sidebar */
+    .order-summary {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f5f1ed;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f5f1ed;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .summary-label {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #d4a574;
+    }
+
+    .summary-total-label {
+        font-family: 'Playfair Display', serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .summary-total-value {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #d4a574;
+    }
+
+    .info-box {
+        background: #f9f6f2;
+        border-left: 4px solid #d4a574;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .info-box i {
+        color: #d4a574;
+        margin-right: 8px;
+    }
+
+    @@media (max-width: 768px) {
+        .checkout-container {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-title {
+            font-size: 24px;
+        }
+
+        .progress-steps {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .step-connector {
+            width: 2px;
+            height: 20px;
+            margin: 5px 0;
+        }
+
+        .form-section {
+            padding: 20px;
+        }
+
+        .section-heading {
+            font-size: 18px;
+        }
+
+        .order-summary {
+            position: static;
+        }
+    }
+</style>
+
+<section class="checkout-section">
+    <div class="container">
+        <div class="checkout-header">
+            <h1 class="checkout-title">🛒 Hoàn tất đơn hàng</h1>
+            <p class="checkout-subtitle">Vui lòng điền đầy đủ thông tin giao hàng và phương thức thanh toán</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="progress-step active">
+                <div class="step-circle">1</div>
+                <span>Thông tin giao hàng</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="progress-step">
+                <div class="step-circle">2</div>
+                <span>Phương thức thanh toán</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="progress-step">
+                <div class="step-circle">✓</div>
+                <span>Hoàn tất</span>
             </div>
         </div>
-    </div>
-</section>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+        <div class="checkout-container">
+            <!-- Main Form -->
+            <div>
+                <form asp-controller="Order" asp-action="ConfirmOrder" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Hidden Order Items -->
+                    @for (int i = 0; i < Model.orderItemViews.Count; i++)
+                    {
+                        <input type="hidden" name="orderItemViews[@i].ProductDetailId"
+                               value="@Model.orderItemViews[i].ProductDetailId" />
+                        <input type="hidden" name="orderItemViews[@i].Quantity" value="@Model.orderItemViews[i].Quantity" />
+                        <input type="hidden" name="orderItemViews[@i].UnitPrice"
+                               value="@Model.orderItemViews[i].UnitPrice" />
+                        <input type="hidden" name="orderItemViews[@i].CartItemId"
+                               value="@Model.orderItemViews[i].CartItemId" />
+                    }
+
+                    <!-- Section 1: Delivery Information -->
+                    <div class="form-section">
+                        <h5 class="section-heading">
+                            <span class="step-number">1</span>
+                            Thông tin nhận bánh
+                        </h5>
+
+                        <div class="form-group">
+                            <label asp-for="DeliveryAddress">📍 Địa chỉ giao hàng</label>
+                            <input asp-for="DeliveryAddress" class="form-control"
+                                   placeholder="Vd: 123 Đường Nguyễn Huệ, Quận 1, TP.HCM" />
+                            <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DeliveryDate">📅 Ngày giao hàng</label>
+                            <input asp-for="DeliveryDate" type="date" class="form-control" />
+                            <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DeliveryTimeSlot">⏰ Khung giờ giao hàng</label>
+                            <select asp-for="DeliveryTimeSlot" class="form-control">
+                                <option value="">-- Chọn khung giờ giao --</option>
+                                <option value="08:00 - 10:00">08:00 - 10:00</option>
+                                <option value="10:00 - 12:00">10:00 - 12:00</option>
+                                <option value="12:00 - 14:00">12:00 - 14:00</option>
+                                <option value="14:00 - 16:00">14:00 - 16:00</option>
+                                <option value="16:00 - 18:00">16:00 - 18:00</option>
+                                <option value="18:00 - 20:00">18:00 - 20:00</option>
+                                <option value="20:00 - 22:00">20:00 - 22:00</option>
+                            </select>
+                            <span asp-validation-for="DeliveryTimeSlot" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="OrderNote">📝 Ghi chú cho đơn hàng</label>
+                            <textarea asp-for="OrderNote" class="form-control"
+                                      placeholder="Nhập ghi chú đặc biệt (vd: yêu cầu trang trí riêng, lời nhắn)..."></textarea>
+                        </div>
+
+                        <div class="info-box">
+                            <i class="fas fa-info-circle"></i>
+                            Bánh sẽ tươi nhất khi nhận hàng. Vui lòng lựa chọn thời gian phù hợp!
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Payment Methods -->
+                    <div class="form-section">
+                        <h5 class="section-heading">
+                            <span class="step-number">2</span>
+                            Phương thức thanh toán
+                        </h5>
+
+                        <div class="payment-methods-checkout">
+                            <div class="form-check">
+                                <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay1"
+                                       value="COD" />
+                                <label class="form-check-label" for="pay1">
+                                    <i class="fas fa-money-bill"></i>
+                                    <strong>Thanh toán khi nhận hàng (COD)</strong>
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay2"
+                                       value="BankTransfer" />
+                                <label class="form-check-label" for="pay2">
+                                    <i class="fas fa-university"></i>
+                                    <strong>Chuyển khoản ngân hàng</strong>
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay3"
+                                       value="Card" />
+                                <label class="form-check-label" for="pay3">
+                                    <i class="fas fa-credit-card"></i>
+                                    <strong>Thanh toán qua thẻ tín dụng</strong>
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input asp-for="PaymentMethod" class="form-check-input" type="radio" id="pay4"
+                                       value="EWallet" />
+                                <label class="form-check-label" for="pay4">
+                                    <i class="fas fa-wallet"></i>
+                                    <strong>Ví điện tử (Momo, ZaloPay)</strong>
+                                </label>
+                            </div>
+
+                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                        </div>
+
+                        <div class="info-box">
+                            <i class="fas fa-shield-alt"></i>
+                            Tất cả giao dịch được bảo mật tuyệt đối. Chúng tôi không bao giờ lưu trữ thông tin thẻ của
+                            bạn.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-check-circle"></i>
+                        Hoàn thành đơn hàng
+                    </button>
+                </form>
+            </div>
+
+            <!-- Order Summary Sidebar -->
+            <aside class="order-summary">
+                <h3 class="summary-title">📋 Tóm tắt đơn hàng</h3>
+
+                <div class="summary-item">
+                    <span class="summary-label">Số sản phẩm:</span>
+                    <span class="summary-value">@Model.orderItemViews.Sum(x => x.Quantity) bánh</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Tạm tính:</span>
+                    <span class="summary-value">@string.Format("{0:N0}", Model.orderItemViews.Sum(x => x.Quantity *
+                                                x.UnitPrice)) đ</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Phí giao hàng:</span>
+                        <span class="summary-value">30.000 đ</span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span class="summary-total-label">Tổng cộng:</span>
+                        <span class="summary-total-value">@string.Format("{0:N0}", Model.orderItemViews.Sum(x => x.Quantity
+                                                    * x.UnitPrice) + 30000) đ</span>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 30px; border-left-color: #d4a574;">
+                            <i class="fas fa-truck"></i>
+                            <strong>Giao hàng miễn phí</strong> cho đơn hàng trên 500.000đ
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        @section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+        }

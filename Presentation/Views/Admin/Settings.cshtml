@@ -1,0 +1,402 @@
+@{
+    ViewData["Title"] = "Cài đặt hệ thống";
+    Layout = "~/Views/Shared/_LayoutUnified.cshtml";
+}
+
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Cài đặt</li>
+        </ol>
+    </nav>
+}
+
+<!-- Page Header -->
+<div class="mb-4">
+    <h1 class="page-title">Cài đặt hệ thống</h1>
+    <p class="page-subtitle">Quản lý cấu hình và cài đặt chung của cửa hàng</p>
+</div>
+
+<!-- Settings Tabs -->
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="settings-menu">
+            <div class="settings-menu-item active" data-tab="general">
+                <i class="fas fa-cog"></i> Cài đặt chung
+            </div>
+            <div class="settings-menu-item" data-tab="store">
+                <i class="fas fa-store"></i> Thông tin cửa hàng
+            </div>
+            <div class="settings-menu-item" data-tab="shipping">
+                <i class="fas fa-truck"></i> Giao hàng & Phí
+            </div>
+            <div class="settings-menu-item" data-tab="email">
+                <i class="fas fa-envelope"></i> Email & Thông báo
+            </div>
+            <div class="settings-menu-item" data-tab="payment">
+                <i class="fas fa-credit-card"></i> Thanh toán
+            </div>
+            <div class="settings-menu-item" data-tab="security">
+                <i class="fas fa-lock"></i> Bảo mật
+            </div>
+            <div class="settings-menu-item" data-tab="backup">
+                <i class="fas fa-download"></i> Sao lưu & Khôi phục
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <!-- General Settings -->
+        <div class="settings-content active" id="general">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Cài đặt chung</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Tên cửa hàng</label>
+                            <input type="text" class="form-control" value="Cửa hàng Bánh Sinh Nhật ABC" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Múi giờ</label>
+                            <select class="form-control">
+                                <option selected>UTC+7 (Giờ Việt Nam)</option>
+                                <option>UTC+6</option>
+                                <option>UTC+8</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tiền tệ mặc định</label>
+                            <input type="text" class="form-control" value="VNĐ (₫)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại liên lạc</label>
+                            <input type="tel" class="form-control" value="0123456789" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email liên lạc</label>
+                            <input type="email" class="form-control" value="contact@example.com" />
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Information -->
+        <div class="settings-content" id="store">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Thông tin cửa hàng</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Logo cửa hàng</label>
+                            <div class="upload-area">
+                                <input type="file" class="form-control" accept="image/*" />
+                                <p class="text-muted mt-2">Kích thước tối thiểu: 200x200px</p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mô tả cửa hàng</label>
+                            <textarea class="form-control"
+                                      rows="5">Cửa hàng bánh sinh nhật chuyên cung cấp các loại bánh cream, có trang trí đẹp mắt...</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <input type="text" class="form-control" value="123 Đường ABC, Quận 1, TP.HCM" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tỉnh/Thành phố</label>
+                                <input type="text" class="form-control" value="TP. Hồ Chí Minh" />
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Settings -->
+        <div class="settings-content" id="shipping">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Giao hàng & Phí</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Phí giao hàng mặc định</label>
+                            <input type="number" class="form-control" value="30000" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Miễn phí giao hàng từ</label>
+                            <input type="number" class="form-control" value="500000" />
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="freeShipping" checked />
+                                <label class="form-check-label" for="freeShipping">
+                                    Bật miễn phí giao hàng
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Thời gian giao hàng dự kiến</label>
+                            <input type="text" class="form-control" value="1-3 ngày làm việc" />
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Settings -->
+        <div class="settings-content" id="email">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Email & Thông báo</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">SMTP Host</label>
+                            <input type="text" class="form-control" value="smtp.gmail.com" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">SMTP Port</label>
+                            <input type="number" class="form-control" value="587" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email tài khoản</label>
+                            <input type="email" class="form-control" value="noreply@example.com" />
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="emailNotif" checked />
+                                <label class="form-check-label" for="emailNotif">
+                                    Gửi email thông báo tới khách hàng
+                                </label>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Settings -->
+        <div class="settings-content" id="payment">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Phương thức thanh toán</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="payment-methods-list">
+                            <div class="payment-method">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="cod" checked />
+                                    <label class="form-check-label" for="cod">
+                                        Thanh toán khi nhận hàng (COD)
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="bank" checked />
+                                    <label class="form-check-label" for="bank">
+                                        Chuyển khoản ngân hàng
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="card" checked />
+                                    <label class="form-check-label" for="card">
+                                        Thẻ tín dụng
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="wallet" />
+                                    <label class="form-check-label" for="wallet">
+                                        Ví điện tử (Momo, ZaloPay)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary mt-3">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="settings-content" id="security">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Bảo mật</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Đổi mật khẩu quản trị</label>
+                            <input type="password" class="form-control" placeholder="Mật khẩu hiện tại" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Mật khẩu mới" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Xác nhận mật khẩu mới" />
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="twoFactor" />
+                                <label class="form-check-label" for="twoFactor">
+                                    Bật xác thực hai yếu tố
+                                </label>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Settings -->
+        <div class="settings-content" id="backup">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Sao lưu & Khôi phục</h5>
+                </div>
+                <div class="card-body">
+                    <div class="backup-section">
+                        <h6 class="mb-3">Sao lưu dữ liệu</h6>
+                        <p class="text-muted">Tính năng sao lưu tự động được bật. Lần sao lưu cuối cùng: 2024-04-02
+                            10:30</p>
+                            <button type="button" class="btn btn-primary">
+                                <i class="fas fa-download"></i> Sao lưu ngay
+                            </button>
+                        </div>
+                        <hr />
+                        <div class="restore-section">
+                            <h6 class="mb-3">Khôi phục từ sao lưu</h6>
+                            <p class="text-muted">Chọn tệp sao lưu để khôi phục dữ liệu</p>
+                            <input type="file" class="form-control mb-2" />
+                            <button type="button" class="btn btn-danger">
+                                <i class="fas fa-history"></i> Khôi phục
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .settings-menu {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .settings-menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            color: #666;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-menu-item:hover {
+            background: #f9f6f2;
+        }
+
+        .settings-menu-item.active {
+            background: #f5f1ed;
+            border-left-color: #d4a574;
+            color: #d4a574;
+            font-weight: 600;
+        }
+
+        .settings-menu-item i {
+            width: 20px;
+        }
+
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .payment-methods-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .payment-method {
+            padding: 15px;
+            background: #f9f6f2;
+            border-radius: 6px;
+        }
+
+        .backup-section,
+        .restore-section {
+            padding: 20px 0;
+        }
+
+        .upload-area {
+            padding: 20px;
+            background: #f9f6f2;
+            border: 2px dashed #d4a574;
+            border-radius: 8px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.settings-menu-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    const tabName = this.getAttribute('data-tab');
+                
+                    // Hide all content
+                    document.querySelectorAll('.settings-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                
+                    // Remove active from all menu items
+                    document.querySelectorAll('.settings-menu-item').forEach(menuItem => {
+                        menuItem.classList.remove('active');
+                    });
+                
+                    // Show selected content and menu item
+                    document.getElementById(tabName).classList.add('active');
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>

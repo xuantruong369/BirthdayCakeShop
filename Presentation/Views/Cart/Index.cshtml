@@ -1,173 +1,215 @@
 @using Presentation.ViewModels
 @{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_LayoutClient.cshtml";
+  ViewData["Title"] = "Giỏ hàng";
+  Layout = "~/Views/Shared/_LayoutClient.cshtml";
 }
 @model List<CartItemView>
-    <!-- Shopping Cart Section -->
-    <section class="cart-section py-5">
-      <div class="container">
-        <h1 class="section-title mb-4">Giỏ hàng của bạn</h1>
 
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="cart-items-table">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Sản phẩm</th>
-                    <th>Ảnh</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Tổng cộng</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                @foreach(var item in Model)
+<style>
+  .cart-section {
+    min-height: calc(100vh - 400px);
+    padding: 60px 0;
+  }
+
+  .cart-items-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .cart-items-table table {
+    margin-bottom: 0;
+  }
+
+  .cart-items-table th {
+    background-color: #f5f1ed;
+    border-bottom: 2px solid #d4a574;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .cart-items-table td {
+    vertical-align: middle;
+    padding: 15px;
+  }
+
+  .cart-items-table img {
+    border-radius: 4px;
+  }
+
+  .cart-total {
+    font-weight: 700;
+    color: #d4a574;
+  }
+
+  .btn-danger {
+    background-color: #e74c3c;
+    border: none;
+  }
+
+  .btn-danger:hover {
+    background-color: #c0392b;
+  }
+
+  .cart-summary {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+
+  .summary-row.total {
+    border-top: 2px solid #d4a574;
+    padding-top: 15px;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #d4a574;
+  }
+
+  .coupon-section {
+    background: #f5f1ed;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+  }
+
+  .coupon-section h6 {
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+</style>
+
+<!-- Shopping Cart Section -->
+<section class="cart-section">
+  <div class="container">
+    <h1 class="section-title mb-5">Giỏ hàng của bạn</h1>
+
+    @if (Model != null && Model.Count > 0)
+    {
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="cart-items-table">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 30%;">Sản phẩm</th>
+                  <th style="width: 15%;">Ảnh</th>
+                  <th style="width: 15%;">Giá</th>
+                  <th style="width: 15%;">Số lượng</th>
+                  <th style="width: 15%;">Tổng cộng</th>
+                  <th style="width: 10%;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var item in Model)
                 {
-                        <tr class="cart-item">
+                  <tr class="cart-item">
                     <td>
-                      @* Phai la product Id *@
-                      <a asp-controller="Product" asp-action="GetProductDetail" asp-route-maSp="@item.ProductId">@item.ProductName</a>
-                      
+                      <a asp-controller="Product" asp-action="GetProductDetail" asp-route-maSp="@item.ProductId"
+                         style="color: #d4a574; text-decoration: none; font-weight: 500;">
+                        @item.ProductName
+                      </a>
                     </td>
                     <td>
-                      <img
-                        src="@Url.Content("~/Client/img/product/" + @item.Thumbnail)"
-                        alt="Product"
-                        height="50px"
-                        width="50px"
-                      />
+                      <img src="@Url.Content("~/Client/img/product/" + @item.Thumbnail)" alt="Product" height="60px"
+                           width="60px" style="object-fit: cover;" />
                     </td>
                     <td>@item.Price VNĐ</td>
+                    <td>@item.Quantity</td>
+                    <td class="cart-total">@(@item.Price* @item.Quantity) VNĐ</td>
                     <td>
-                      @* <input
-                        type="number"
-                        value="@item.Quantity"
-                        min="1"
-                        class="form-control cart-qty"
-                        style="max-width: 70px"
-                      /> *@
-                      @item.Quantity
-                    </td>
-                    <td class="cart-total">@(@item.Price * @item.Quantity) VNĐ</td>
-                    <td>
-                      <a
-                        class="btn btn-sm btn-danger"
-                        asp-controller="Cart" asp-action="DeleteCartItem" asp-route-cartItemId="@item.CartItemId"
-                      >
+                      <a class="btn btn-sm btn-danger" asp-controller="Cart" asp-action="DeleteCartItem"
+                         asp-route-cartItemId="@item.CartItemId" title="Xóa">
                         <i class="fas fa-trash"></i>
                       </a>
                     </td>
                   </tr>
                 }
-                </tbody>
-              </table>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-4 mb-4">
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="cart-summary">
+            <h5 style="font-family: 'Playfair Display', serif; margin-bottom: 20px;">Thông tin đơn hàng</h5>
+            <div class="summary-row">
+              <span>Tạm tính:</span>
+              <span>@(Model.Sum(x => x.Price * x.Quantity)) VNĐ</span>
+            </div>
+            <div class="summary-row">
+              <span>Phí vận chuyển:</span>
+              <span>Miễn phí</span>
+            </div>
+            <div class="summary-row total">
+              <span>Tổng cộng:</span>
+              <span>@(Model.Sum(x => x.Price * x.Quantity)) VNĐ</span>
             </div>
 
-            <div class="cart-actions mb-4">
-              <a asp-controller="Shop" asp-action="Index" class="btn btn-secondary">Tiếp tục mua sắm</a>
-            </div>
-
-            <!-- Coupon Code -->
             <div class="coupon-section">
               <h6>Có mã giảm giá?</h6>
               <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Nhập mã giảm giá"
-                />
-                <div class="input-group-append">
-                  <button class="btn btn-primary" type="button">Áp dụng</button>
-                </div>
+                <input type="text" class="form-control" placeholder="Nhập mã giảm giá" />
+                <button class="btn btn-primary" type="button">Áp dụng</button>
               </div>
             </div>
-          </div>
 
-          <!-- Cart Summary -->
-          <div class="col-lg-4">
-            <div class="cart-summary">
-              <h5 class="mb-4">Tóm tắt đơn hàng</h5>
-              <div class="summary-item">
-                <span>Tạm tính:</span>
-                @{
-                      decimal? total = 0;
+            <form asp-controller="Order" asp-action="Checkout" method="post">
+              @for (int i = 0; i < Model.Count; i++)
+              {
+                @* Truyền các thông tin cần thiết của đối tượng qua input ẩn *@
+                <input type="hidden" name="[@i].ProductDetailId" value="@Model[i].ProductDetailId" />
+                <input type="hidden" name="[@i].Quantity" value="@Model[i].Quantity" />
+                <input type="hidden" name="[@i].UnitPrice" value="@Model[i].Price" />
+                <input type="hidden" name="[@i].CartItemId" value="@Model[i].CartItemId" />
+              }
 
-                      foreach(var item in Model)
-                      {
-                          total += item.Quantity * item.Price;             
-                      }
-                  }
-                <span class="summary-value">@total VNĐ</span>
-              </div>
-              <div class="summary-item">
-                <span>Phí vận chuyển:</span>
-                <span class="summary-value">0 VNĐ</span>
-              </div>
-              <div class="summary-item">
-                <span>Giảm giá:</span>
-                <span class="summary-value text-success">0 VNĐ</span>
-              </div>
-              <div class="summary-item">
-                <span>Thuế:</span>
-                <span class="summary-value">0 VNĐ</span>
-              </div>
-              <hr />
-              <div class="summary-item total">
-                <span>Tổng cộng:</span>
-                <span class="summary-value">@total VNĐ</span>
-              </div>
-
-              @* <a
-                asp-controller="Order" asp-action="Checkout"
-                class="btn btn-primary btn-block btn-lg mt-4"
-                
-                >Tiến hành thanh toán</a> *@
-                <form asp-controller="Order" asp-action="Checkout" method="post">
-                    @for (int i = 0; i < Model.Count; i++)
-                    {
-                        @* Truyền các thông tin cần thiết của đối tượng qua input ẩn *@
-                        <input type="hidden" name="[@i].ProductDetailId" value="@Model[i].ProductDetailId" />
-                        <input type="hidden" name="[@i].Quantity" value="@Model[i].Quantity" />
-                        <input type="hidden" name="[@i].UnitPrice" value="@Model[i].Price" />
-                        <input type="hidden" name="[@i].CartItemId" value="@Model[i].CartItemId" />
-                    }
-
-                    <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">
-                        Tiến hành đặt hàng
-                    </button>
-                </form>
-
-              <div class="sidebar-special-offer mt-4">
-                <h6>Ưu đãi đặc biệt</h6>
-                <p>
-                  <i class="fas fa-check text-success"></i> Giao hàng miễn phí
-                  cho đơn từ 1,000,000 VNĐ
-                </p>
-                <p>
-                  <i class="fas fa-check text-success"></i> Đổi trả miễn phí
-                  trong 7 ngày
-                </p>
-                <p>
-                  <i class="fas fa-check text-success"></i> Tư vấn thiết kế bánh
-                  miễn phí
-                </p>
-              </div>
-            </div>
+              <button type="submit" class="btn btn-primary w-100" style="padding: 12px;">
+                <i class="fas fa-credit-card"></i> Đặt hàng
+              </button>
+            </form>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- Newsletter Section -->
-    <section class="newsletter-section py-5">
-      <div class="container text-center">
-        <h2 class="mb-3">Nhận tặng 10% cho đơn hàng tiếp theo</h2>
-        <form class="newsletter-form">
-          <input type="email" placeholder="Nhập email của bạn" required />
-          <button type="submit" class="btn btn-primary">Đăng ký</button>
-        </form>
+    }
+    else
+    {
+      <div style="text-align: center; padding: 60px 0;">
+        <i class="fas fa-shopping-cart" style="font-size: 48px; color: #d4a574; margin-bottom: 20px; display: block;"></i>
+        <h4 style="margin-bottom: 10px;">Giỏ hàng của bạn trống</h4>
+        <p style="color: #666; margin-bottom: 30px;">Hãy thêm một số sản phẩm yêu thích vào giỏ hàng</p>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary">
+          Bắt đầu mua sắm
+        </a>
       </div>
-    </section>
+    }
+  </div>
+</section>
+
+
+
+<!-- Newsletter Section -->
+<section class="newsletter-section py-5">
+  <div class="container text-center">
+    <h2 class="mb-3">Nhận tặng 10% cho đơn hàng tiếp theo</h2>
+    <form class="newsletter-form">
+      <input type="email" placeholder="Nhập email của bạn" required />
+      <button type="submit" class="btn btn-primary">Đăng ký</button>
+    </form>
+  </div>
+</section>

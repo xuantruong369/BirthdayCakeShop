@@ -10,9 +10,15 @@ namespace DataAccess.Repositories
     {
         public UserRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
+        public async Task<User?> GetByUserId(int? userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
+
         public async Task<User?> GetByUsername(string username)
         {
             return await _context.Users
+                .Include(p => p.Customer)
                 .FirstOrDefaultAsync(x => x.Username == username);
         }
 

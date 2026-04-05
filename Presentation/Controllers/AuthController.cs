@@ -45,6 +45,11 @@ namespace Presentation.Controllers
                 {
                     HttpContext.Session.SetString("UserName", u.Username.ToString());
                     HttpContext.Session.SetInt32("Id", u.UserId);
+                    if (u.Avatar != null)
+                    {
+                        TempData["Avatar"] = "~/Client/img/" + u.Avatar;
+                    }
+                    TempData["Avatar"] = "~/Admin/images/faces/face1.jpg";
                     if (u.Role == "Admin")
                     {
                         return RedirectToAction("Index", "Admin");

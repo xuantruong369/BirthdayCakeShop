@@ -1,4 +1,4 @@
-<!doctype html>
+@* <!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -143,4 +143,739 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
   </body>
+</html> *@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Birthday Cake Shop - Cửa hàng bánh sinh nhật trực tuyến" />
+  <meta name="keywords" content="bánh sinh nhật, bánh tiramisu, bánh chocolate, đặt bánh online" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Birthday Cake Shop - Cửa hàng bánh sinh nhật</title>
+
+  <!-- Google Font -->
+  <link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="~/Client/css/style.css" type="text/css" />
+    
+  <style>
+      :root {
+        --primary-color: #d4a574;
+        --primary-dark: #c29456;
+        --primary-light: #e8c8a0;
+        --dark-color: #1a1a1a;
+        --light-bg: #f5f1ed;
+        --light-bg-2: #f9f6f2;
+        --text-color: #1a1a1a;
+        --text-muted: #666;
+        --border-color: #e0e0e0;
+        --success: #27ae60;
+        --warning: #f39c12;
+        --danger: #e74c3c;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        color: var(--text-color);
+        background-color: #fff;
+        line-height: 1.6;
+      }
+
+      /* ===== NAVBAR ===== */
+      .navbar {
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 12px 0;
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        border-bottom: 3px solid var(--primary-color);
+      }
+
+      .navbar-brand {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color) !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .navbar-brand i {
+        font-size: 28px;
+      }
+
+      .navbar-nav .nav-link {
+        color: var(--text-color) !important;
+        font-weight: 500;
+        font-size: 14px;
+        margin: 0 12px;
+        padding: 8px 0 !important;
+        position: relative;
+        transition: color 0.3s ease;
+      }
+
+      .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease;
+      }
+
+      .navbar-nav .nav-link:hover {
+        color: var(--primary-color) !important;
+      }
+
+      .navbar-nav .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* ===== SECTIONS ===== */
+      .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--dark-color);
+        position: relative;
+        padding-bottom: 20px;
+      }
+
+      .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        border-radius: 2px;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(135deg, var(--light-bg) 0%, var(--light-bg-2) 100%);
+        padding: 100px 0;
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .hero-content h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 20px;
+      }
+
+      .hero-content p {
+        font-size: 18px;
+        color: var(--text-muted);
+        margin-bottom: 40px;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        color: white;
+        padding: 12px 32px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(212, 165, 116, 0.25);
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        padding: 10px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-lg {
+        padding: 14px 40px !important;
+        font-size: 16px !important;
+      }
+
+      /* Featured Products */
+      .featured-section {
+        padding: 60px 0;
+      }
+
+      .product-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+      }
+
+      .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(212, 165, 116, 0.15);
+      }
+
+      .product-image {
+        position: relative;
+        overflow: hidden;
+        height: 250px;
+        background-color: var(--light-bg);
+      }
+
+      .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .product-card:hover .product-image img {
+        transform: scale(1.05);
+      }
+
+      .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .btn-wishlist {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-wishlist:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .product-info {
+        padding: 20px;
+      }
+
+      .product-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+      }
+
+      .product-rating {
+        color: #ffc107;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      .product-rating span {
+        color: var(--text-muted);
+        margin-left: 5px;
+      }
+
+      .product-price {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+      }
+
+      .btn-view {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        border: none;
+        padding: 8px 16px;
+        width: 100%;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-view:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      /* Categories Section */
+      .categories-section {
+        background-color: var(--light-bg);
+        padding: 60px 0;
+      }
+
+      .category-card {
+        background: white;
+        padding: 40px 20px;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(212, 165, 116, 0.15);
+      }
+
+      .category-icon {
+        font-size: 48px;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+      }
+
+      .category-card h5 {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+      }
+
+      .category-card p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex-grow: 1;
+      }
+
+      .category-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+      }
+
+      .category-link:hover {
+        color: var(--primary-dark);
+        transform: translateX(5px);
+        text-decoration: none;
+      }
+
+      /* Why Choose Us Section */
+      .why-choose-us {
+        background-color: white;
+        padding: 60px 0;
+      }
+
+      .feature-box {
+        background: linear-gradient(135deg, var(--light-bg) 0%, var(--light-bg-2) 100%);
+        border-radius: 8px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid #e8e0d8;
+      }
+
+      .feature-box:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(212, 165, 116, 0.15);
+        border-color: var(--primary-color);
+      }
+
+      .feature-icon {
+        font-size: 50px;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+      }
+
+      .feature-box h5 {
+        font-family: 'Playfair Display', serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 15px;
+      }
+
+      .feature-box p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: var(--dark-color);
+        color: white;
+        padding: 50px 0 20px;
+        margin-top: 80px;
+      }
+
+      .footer h5,
+      .footer h6 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .footer p {
+        color: #ccc;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+
+      .footer-links {
+        list-style: none;
+        padding: 0;
+      }
+
+      .footer-links li {
+        margin-bottom: 12px;
+      }
+
+      .footer-links a {
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary-color);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .social-links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: rgba(212, 165, 116, 0.2);
+        color: var(--primary-color);
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-links a:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+      }
+
+      .payment-methods {
+        display: flex;
+        gap: 15px;
+        font-size: 24px;
+        color: var(--primary-color);
+      }
+
+      .footer hr {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 30px 0;
+      }
+
+      /* Form Styles */
+      .form-group label {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 8px;
+      }
+
+      .form-control {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+      }
+
+      /* User Profile Dropdown */
+      .btn-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-user:hover {
+        background-color: var(--light-bg);
+      }
+
+      .btn-user:focus {
+        box-shadow: none;
+        background-color: var(--light-bg);
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary-color);
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: var(--dark-color);
+        margin: 0 5px;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .btn-user i {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .dropdown-menu {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 8px 0;
+      }
+
+      .dropdown-item {
+        padding: 8px 16px;
+        font-size: 14px;
+        color: var(--text-color);
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-item:hover {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+      }
+
+      .dropdown-item i {
+        color: var(--primary-color);
+        margin-right: 8px;
+        width: 16px;
+      }
+
+      .dropdown-divider {
+        margin: 6px 0;
+        border-color: var(--border-color);
+      }
+
+      /* Responsive */
+      @@media (max-width: 768px) {
+        .hero-content h1 {
+          font-size: 32px;
+        }
+
+        .section-title {
+          font-size: 28px;
+        }
+
+        .navbar-nav .nav-link {
+          margin: 0;
+          padding: 10px 0 !important;
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+        }
+
+        .user-name {
+          display: none;
+        }
+
+        .btn-user {
+          padding: 6px 8px;
+        }
+      }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+        <i class="fas fa-birthday-cake"></i> Birthday Cake
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" asp-controller="Shop" asp-action="Index">Cửa hàng</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" asp-controller="Home" asp-action="About">Về chúng tôi</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" asp-controller="Home" asp-action="Contact">Liên hệ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" asp-controller="Cart" asp-action="Index">
+              <i class="fas fa-shopping-cart"></i> Giỏ hàng
+            </a>
+          </li>
+          <li class="nav-item dropdown ms-3">
+            <button class="btn btn-user" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="~/Admin/images/faces/face1.jpg" alt="User" class="user-avatar" />
+              <span class="user-name">Tài khoản</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" asp-controller="Customer" asp-action="Profile"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
+              @* <li><a class="dropdown-item" asp-controller="Customer" asp-action="Settings"><i class="fas fa-cog me-2"></i>Cài đặt</a></li> *@
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main  id="displayProducts">
+    @RenderBody()
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h5><i class="fas fa-birthday-cake"></i> Birthday Cake Shop</h5>
+          <p>Cửa hàng bánh sinh nhật trực tuyến hàng đầu. Chúng tôi cam kết mang đến những chiếc bánh tươi mới, chất
+            lượng cao nhất cho mỗi dịp đặc biệt trong cuộc sống của bạn.</p>
+            <div class="social-links">
+              <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div class="col-md-2 mb-4">
+            <h6>Liên kết nhanh</h6>
+            <ul class="footer-links">
+              <li><a href="#">Trang chủ</a></li>
+              <li><a href="#">Cửa hàng</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Liên hệ</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h6>Thông tin cửa hàng</h6>
+            <ul class="footer-links">
+              <li><i class="fas fa-map-marker-alt"></i> 123 Đường Lê Duân, Hà Nội</li>
+              <li><i class="fas fa-phone"></i> 0123 456 789</li>
+              <li><i class="fas fa-envelope"></i> hello@birthdaycake.vn</li>
+              <li><i class="fas fa-clock"></i> 8:00 - 22:00 hàng ngày</li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h6>Phương thức thanh toán</h6>
+            <div class="payment-methods">
+              <i class="fab fa-cc-visa"></i>
+              <i class="fab fa-cc-mastercard"></i>
+              <i class="fab fa-cc-paypal"></i>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <p>&copy; 2024 Birthday Cake Shop. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Client/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
+  </body>
+
 </html>
+

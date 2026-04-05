@@ -38,7 +38,7 @@ public class HomeController : Controller
     {
         var productList = await _service.GetProducts();
 
-        var productListView = productList.Select(p => new ProductListViewModel
+        var productListView = productList.Take(8).Select(p => new ProductListViewModel
         {
             Id = p.Id,
             Name = p.Name,

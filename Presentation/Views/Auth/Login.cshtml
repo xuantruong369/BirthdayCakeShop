@@ -1,88 +1,200 @@
 @{
     Layout = null;
+    ViewData["Title"] = "Đăng nhập";
 }
 @model User
 
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Purple Admin</title>
-    <!-- plugins:css -->
-    <link rel="stylesheet" href="../Admin/vendors/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="../Admin/vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
-    <link rel="stylesheet" href="../Admin/css/style.css">
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="../Admin/images/favicon.ico" />
-  </head>
-  <body>
-    <div class="container-scroller">
-      <div class="container-fluid page-body-wrapper full-page-wrapper">
-        <div class="content-wrapper d-flex align-items-center auth">
-          <div class="row flex-grow">
-            <div class="col-lg-4 mx-auto">
-              <div class="auth-form-light text-left p-5">
-                @* <div class="brand-logo">
-                  <img src="../Admin/images/logo.svg">
-                </div> *@
-                <h4>Xin chào! Hãy đăng nhập để tiếp tục</h4>
-                <h6 class="font-weight-light">Đăng nhập để mua bánh và đặt hàng.</h6>
-                @* <form class="pt-3"> *@
-                @using(Html.BeginForm("Login", "Auth", FormMethod.Post)) {
-                  <div class="form-group">
-                    @* <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Username"> *@
-                    @Html.TextBoxFor(x=>x.Username, new{@class="form-control form-control-lg", placeholder="Tên đăng nhập", required="required", autofocus="autofocus"})
-                  </div>
-                  <div class="form-group">
-                    @* <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password"> *@
-                    @Html.TextBoxFor(x=>x.PasswordHash, new{@class="form-control form-control-lg", placeholder="Mật khẩu", required="required", autofocus="autofocus", type="password"})
-                  </div>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Birthday Cake Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-                  <div class="my-2 d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                      <label class="form-check-label text-muted">
-                        <input type="checkbox" class="form-check-input"> Ghi nhớ đăng nhập </label>
-                    </div>
-                    <a href="#" class="auth-link text-black">Quên mật khẩu?</a>
-                  </div>
-                  @* <div class="mb-2">
-                    <button type="button" class="btn btn-block btn-facebook auth-form-btn">
-                      <i class="mdi mdi-facebook me-2"></i>Connect using facebook </button>
-                  </div> *@
-                  <div class="mt-3">
-                    @* <a class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" href="../../index.html">SIGN IN</a> *@
-                    <button class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" type="submit">ĐĂNG NHẬP</button>
-                  </div>
-                  <div class="text-center mt-4 font-weight-light"> Chưa có tài khoản? <a asp-controller="Auth" asp-action="Register" class="text-primary">Đăng ký</a>
-                  </div>
-                }
-                @* </form> *@
-              </div>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f1ed;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f1ed 0%, #f9f6f2 100%);
+            padding: 20px;
+        }
+
+    .auth-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(212, 165, 116, 0.15);
+        padding: 40px;
+        max-width: 420px;
+        width: 100%;
+        border-top: 4px solid #d4a574;
+    }
+
+    .auth-card h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+
+    .auth-card .subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 30px;
+        font-weight: 400;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        font-family: 'Poppins', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1a1a1a;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="email"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #d4a574;
+        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+    }
+
+    .remember-forgot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 0;
+        font-size: 13px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .remember-forgot input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .remember-forgot a {
+        color: #d4a574;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .remember-forgot a:hover {
+        color: #c29456;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 11px 20px;
+        background-color: #d4a574;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn-login:hover {
+        background-color: #c29456;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 165, 116, 0.25);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 24px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .auth-footer a {
+        color: #d4a574;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+    .auth-footer a:hover {
+        color: #c29456;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 4px;
+        font-family: 'Poppins', sans-serif;
+    }
+</style>
+</head>
+<body>
+    <div class="auth-container">
+    <div class="auth-card">
+        <h1>Đăng Nhập</h1>
+        <p class="subtitle">Chào mừng quay lại! Hãy đăng nhập để tiếp tục mua sắm bánh ngon lành.</p>
+
+        @using (Html.BeginForm("Login", "Auth", FormMethod.Post))
+        {
+            <div class="form-group">
+                <label for="username">Tên đăng nhập</label>
+                @Html.TextBoxFor(x => x.Username, new { @class = "form-control", @id = "username", placeholder = "Nhập tên đăng nhập của bạn", required = "required", autofocus = "autofocus" })
+                <span class="error-message">@Html.ValidationMessageFor(x => x.Username)</span>
             </div>
-          </div>
+
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                @Html.TextBoxFor(x => x.PasswordHash, new { @type = "password", @class = "form-control", @id = "password", placeholder = "Nhập mật khẩu của bạn", required = "required" })
+                <span class="error-message">@Html.ValidationMessageFor(x => x.PasswordHash)</span>
+            </div>
+
+            <div class="remember-forgot">
+                <label>
+                    <input type="checkbox"> Ghi nhớ đăng nhập
+                </label>
+                <a href="#">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Đăng Nhập</button>
+        }
+
+        <div class="auth-footer">
+            Chưa có tài khoản?
+            <a asp-controller="Auth" asp-action="Register">Đăng ký ngay</a>
         </div>
-        <!-- content-wrapper ends -->
-      </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
-    <script src="../Admin/vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="../Admin/js/off-canvas.js"></script>
-    <script src="../Admin/js/hoverable-collapse.js"></script>
-    <script src="../Admin/js/misc.js"></script>
-    <!-- endinject -->
-  </body>
+</div>
+</body>
 </html>

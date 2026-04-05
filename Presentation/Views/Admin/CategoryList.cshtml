@@ -1,0 +1,208 @@
+@using Presentation.ViewModels
+@model List<CategoryMenuView>
+
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_LayoutUnified.cshtml";
+}
+
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Danh mục</li>
+        </ol>
+    </nav>
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">Quản lý danh mục</h1>
+        <p class="page-subtitle">Quản lý các loại bánh và danh mục sản phẩm</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+        <i class="fas fa-plus"></i> Thêm danh mục
+    </button>
+</div>
+
+<!-- Categories Grid -->
+<div class="row">
+    @if (Model != null && Model.Count > 0)
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">@item.CategoryName</h5>
+                        <div class="category-actions">
+                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa" data-bs-toggle="modal"
+                                    data-bs-target="#editCategoryModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-delete" title="Xóa"
+                                    onclick="return confirm('Bạn có chắc muốn xóa danh mục này?');">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">@(25 + Model.IndexOf(item))</span>
+                            <span class="stat-label">Sản phẩm</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">@(120 + Model.IndexOf(item) * 10)</span>
+                            <span class="stat-label">Đã bán</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>Không có danh mục nào</p>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm danh mục mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" placeholder="Vd: Bánh Chocolate" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="3" placeholder="Mô tả danh mục..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">Thêm danh mục</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa danh mục</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" value="Bánh Chocolate" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="3">Danh mục bánh chocolate ngon</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .category-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .category-name {
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .category-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .category-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .stat {
+        text-align: center;
+        padding: 15px;
+        background: #f9f6f2;
+        border-radius: 6px;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 24px;
+        font-weight: 700;
+        color: #d4a574;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 12px;
+        color: #999;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-state i {
+        font-size: 80px;
+        color: #e0e0e0;
+        margin-bottom: 20px;
+    }
+
+    .empty-state p {
+        color: #999;
+        font-size: 16px;
+    }
+</style>

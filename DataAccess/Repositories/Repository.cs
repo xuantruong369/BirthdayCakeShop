@@ -31,8 +31,27 @@ namespace DataAccess.Repositories
 
         public async Task Update(T entity)
         {
-            _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Detach any existing tracking to avoid conflicts
+                var existingEntity = _context.ChangeTracker.Entries<T>()
+                    .FirstOrDefault(e => e.Entity == entity);
+                
+                if (existingEntity != null && existingEntity.State != EntityState.Detached)
+                {
+                    existingEntity.State = EntityState.Detached;
+                }
+
+                _context.Set<T>().Update(entity);
+                await _context.SaveChangesAsync();
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("already being tracked"))
+            {
+                // If still tracking issue, get the tracked entity and update its values
+                _context.ChangeTracker.Clear();
+                _context.Set<T>().Update(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task Delete(int id)

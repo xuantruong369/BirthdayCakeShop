@@ -9,5 +9,7 @@ namespace BusinessLogic.DTOs
         public string PasswordHash { get; set; } = null!;
 
         public string Role { get; set; } = null!;
+
+        public string Avatar { get; set; } = null!;
     }
 }

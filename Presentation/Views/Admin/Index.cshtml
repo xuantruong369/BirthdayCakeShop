@@ -1,6 +1,400 @@
 @using Presentation.ViewModels
+@model List<AdminGetProducts>
+
 @{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Quản lý sản phẩm";
+    Layout = "~/Views/Shared/_LayoutUnified.cshtml";
 }
-<h1>Fuck You</h1>
+
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Sản phẩm</li>
+        </ol>
+    </nav>
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">Quản lý sản phẩm</h1>
+        <p class="page-subtitle">Quản lý toàn bộ sản phẩm bánh sinh nhật</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-secondary" id="toggleView">
+            <i class="fas fa-th"></i> Grid
+        </button>
+        <a asp-controller="Admin" asp-action="CreateProduct" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm sản phẩm
+        </a>
+    </div>
+</div>
+
+<!-- Filters & Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên sản phẩm..." />
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="categoryFilter">
+                    <option value="">Tất cả danh mục</option>
+                    <option value="chocolate">Bánh Chocolate</option>
+                    <option value="vanilla">Bánh Vanilla</option>
+                    <option value="custom">Bánh Custom</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="priceFilter">
+                    <option value="">Tất cả giá</option>
+                    <option value="0-500">0 - 500K</option>
+                    <option value="500-1000">500K - 1M</option>
+                    <option value="1000+">Trên 1M</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100" id="resetFilter">
+                    <i class="fas fa-refresh"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Batch Actions -->
+<div class="alert alert-info d-none" id="batchActionsBar" role="alert">
+    <div class="d-flex align-items-center gap-3">
+        <span id="selectedCount">0 sản phẩm</span> được chọn
+        <button class="btn btn-sm btn-danger" onclick="batchDelete()">
+            <i class="fas fa-trash"></i> Xóa
+        </button>
+        <button class="btn btn-sm btn-primary" onclick="batchEdit()">
+            <i class="fas fa-edit"></i> Chỉnh sửa
+        </button>
+    </div>
+</div>
+
+<!-- Products Table View (Default) -->
+<div class="card" id="tableView">
+    <div class="table-responsive">
+        <table class="table table-hover" id="productsTable">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAllCheckbox" class="form-check-input" />
+                    </th>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Giá</th>
+                    <th>Tồn kho</th>
+                    <th>Ngày tạo</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr id="product-@item.ProductId">
+                            <td>
+                                <input type="checkbox" class="form-check-input product-checkbox" value="@item.ProductId" />
+                            </td>
+                            <td>
+                                <img src="@Url.Content("~/Client/img/product/" + item.Thumbnail)" alt="@item.ProductName"
+                                     class="product-thumbnail"
+                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                            </td>
+                            <td>
+                                <strong>@item.ProductName</strong>
+                                <br />
+                                <small class="text-muted">@item.CategoryName</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-primary">@item.CategoryName</span>
+                            </td>
+                            <td>
+                                <strong>@item.Price.ToString("N0")</strong> VNĐ
+                            </td>
+                            <td>
+                                <span class="badge badge-info">@item.Stock</span>
+                            </td>
+                            <td>
+                                <small>@item.CreatedAt</small>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn btn-sm btn-edit" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-productId="@item.ProductId"
+                                           class="btn btn-sm btn-delete"
+                                           onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <p class="text-muted mb-0">Không có sản phẩm nào</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Products Grid View (Hidden by default) -->
+<div class="d-none" id="gridView">
+    <div class="grid">
+        @if (Model != null && Model.Count > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <div class="card product-grid-item">
+                    <div style="position: relative; overflow: hidden; height: 200px; background: var(--light-color);">
+                        <img src="@Url.Content("~/Client/img/product/" + item.Thumbnail)" alt="@item.ProductName"
+                             style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" />
+                        <input type="checkbox" class="form-check-input product-checkbox" value="@item.ProductId"
+                               style="position: absolute; top: 10px; left: 10px;" />
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.ProductName</h5>
+                        <p class="text-muted small">@item.CategoryName</p>
+                        <p class="text-primary fw-bold">@item.Price.ToString("N0") VNĐ</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <i class="fas fa-edit"></i> Chỉnh sửa
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="#" tabindex="-1">Trước</a>
+        </li>
+        <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">2</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">3</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#">Tiếp</a>
+        </li>
+    </ul>
+</nav>
+
+<style>
+    .product-thumbnail {
+        transition: transform 0.3s ease;
+    }
+
+    .product-thumbnail:hover {
+        transform: scale(1.1);
+    }
+
+    .product-grid-item {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .product-grid-item:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-edit,
+    .btn-delete,
+    .btn-view {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Toggle between table and grid view
+        const toggleViewBtn = document.getElementById('toggleView');
+        const tableView = document.getElementById('tableView');
+        const gridView = document.getElementById('gridView');
+        let isGridView = false;
+
+        toggleViewBtn.addEventListener('click', function () {
+            isGridView = !isGridView;
+            if (isGridView) {
+                tableView.classList.add('d-none');
+                gridView.classList.remove('d-none');
+                toggleViewBtn.innerHTML = '<i class="fas fa-list"></i> Danh sách';
+            } else {
+                tableView.classList.remove('d-none');
+                gridView.classList.add('d-none');
+                toggleViewBtn.innerHTML = '<i class="fas fa-th"></i> Grid';
+            }
+        });
+
+        // Select all checkbox
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const productCheckboxes = document.querySelectorAll('.product-checkbox');
+        const batchActionsBar = document.getElementById('batchActionsBar');
+        const selectedCountSpan = document.getElementById('selectedCount');
+
+        function updateBatchActions() {
+            const checkedCount = document.querySelectorAll('.product-checkbox:checked').length;
+            if (checkedCount > 0) {
+                batchActionsBar.classList.remove('d-none');
+                selectedCountSpan.textContent = checkedCount + ' sản phẩm';
+            } else {
+                batchActionsBar.classList.add('d-none');
+            }
+        }
+
+        selectAllCheckbox.addEventListener('change', function () {
+            productCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBatchActions();
+        });
+
+        productCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateBatchActions);
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keyup', function () {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#productsTable tbody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+
+        // Reset filters
+        document.getElementById('resetFilter').addEventListener('click', function () {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('priceFilter').value = '';
+            document.querySelectorAll('#productsTable tbody tr').forEach(row => {
+                row.style.display = '';
+            });
+        });
+    });
+
+    @* function batchDelete() {
+        const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+        if (checkedBoxes.length === 0) {
+            alert('Vui lòng chọn sản phẩm để xóa');
+            return;
+        }
+        if (confirm('Bạn có chắc muốn xóa ' + checkedBoxes.length + ' sản phẩm?')) {
+            showToast('Đang xóa...', 'info');
+            // Implement delete logic here
+            // Lấy danh sách ID
+            const ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+
+            showToast('Đang xóa...', 'info');
+
+            fetch('/Admin/DeleteMultiple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ids)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        location.reload();
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast('Có lỗi xảy ra', 'error');
+                });
+        }
+    } *@
+        function batchDelete() {
+            const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+
+            if (checkedBoxes.length === 0) {
+                alert('Vui lòng chọn sản phẩm để xóa');
+                return;
+            }
+
+            if (!confirm('Bạn có chắc muốn xóa ' + checkedBoxes.length + ' sản phẩm?')) return;
+
+            const ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+
+            fetch('/Admin/DeleteMultiple', {   // nhớ đúng Controller của bạn
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ids)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+
+                        ids.forEach(id => {
+                            const row = document.getElementById(`product-${id}`);
+                            if (row) {
+                                row.style.transition = "0.3s";
+                                row.style.opacity = "0";
+                                setTimeout(() => row.remove(), 300);
+                            }
+                        });
+
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Có lỗi xảy ra');
+                });
+        }
+
+    function batchEdit() {
+        const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
+        if (checkedBoxes.length === 0) {
+            alert('Vui lòng chọn sản phẩm để chỉnh sửa');
+            return;
+        }
+        showToast('Chức năng chỉnh sửa hàng loạt sẽ sớm ra mắt', 'info');
+    }
+</script>

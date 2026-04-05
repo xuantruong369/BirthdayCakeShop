@@ -50,7 +50,7 @@ namespace BusinessLogic.Services
 
         public async Task DeleteProduct(int productId)
         {
-           await _productRepo.DeleteProduct(productId);
+            await _productRepo.DeleteProduct(productId);
         }
 
         public async Task<IEnumerable<GetAdProductDTO>> GetAdProducts()
@@ -63,7 +63,10 @@ namespace BusinessLogic.Services
                 ImageUrl = item.Thumbnail,
                 Price = item.ProductDetails.Min(p => p.Price),
                 ShortDescription = item.Description,
-                CategoryName = item.Category.CategoryName
+                CategoryName = item.Category.CategoryName,
+                CreatedAt = item.CreatedAt,
+                CategoryId = item.CategoryId,
+                Stock = item.ProductDetails.Min(p => p.Stock)
             }).ToList();
             return adProducts;
         }

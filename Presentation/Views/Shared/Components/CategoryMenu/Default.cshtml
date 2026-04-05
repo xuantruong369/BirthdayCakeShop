@@ -2,22 +2,36 @@
 @model List<CategoryMenuView>
 
 
-<div class="shop-filters">
-    <h5 class="filter-title">Danh mục</h5>
-
-    <div class="filter-group">
-        <ul class="list-unstyled mb-0">
-            @foreach (var item in Model)
-            {
-                <li class="mb-2">
-                    <a asp-controller="Product"
-                       asp-action="GetByCategory"
-                       asp-route-categoryId="@item.CategoryId"
-                       class="text-decoration-none">
-                        @item.CategoryName
-                    </a>
-                </li>
-            }
-        </ul>
+<!-- Filter Section -->
+<div class="filter-section">
+    <h3 class="filter-title">🔍 Lọc theo danh mục</h3>
+    <div class="filter-options">
+        <a class="filter-option active" asp-controller="Shop" asp-action="Index">Tất cả</a>
+        @foreach (var item in Model)
+        {
+            <a class="filter-option" data-id="@item.CategoryId" asp-controller="Shop" asp-action="ProductByCategory"
+               asp-route-categoryId="@item.CategoryId">@item.CategoryName</a>
+        }
     </div>
 </div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const currentId = params.get("categoryId");
+
+    const buttons = document.querySelectorAll('.filter-option');
+
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+
+        // Nút "Tất cả"
+        if (!currentId && btn.innerText.trim() === "Tất cả") {
+            btn.classList.add('active');
+        }
+
+        // Nút category
+        if (btn.dataset.id && btn.dataset.id === currentId) {
+            btn.classList.add('active');
+        }
+    });
+</script>
