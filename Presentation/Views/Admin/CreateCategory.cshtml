@@ -1,5 +1,4 @@
-@using Presentation.ViewModels
-@model List<CategoryMenuView>
+@model CreateEditCategory
 
 @{
     ViewData["Title"] = "Quản lý danh mục";
@@ -21,57 +20,39 @@
         <h1 class="page-title">Quản lý danh mục</h1>
         <p class="page-subtitle">Quản lý các loại bánh và danh mục sản phẩm</p>
     </div>
-    <a asp-controller="Admin" asp-action="CreateCategory" class="btn btn-primary">
-
-        <i class="fas fa-plus"></i> Thêm danh mục
-    </a>
 </div>
 
-<!-- Categories Grid -->
+<!-- Add Category Form -->
 <div class="row">
-    @if (Model != null && Model.Count > 0)
-    {
-        @foreach (var item in Model)
-        {
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="category-card">
-                    <div class="category-header">
-                        <h5 class="category-name">@item.CategoryName</h5>
-                        <div class="category-actions">
-                            <a asp-action="EditCategory" asp-controller="Admin" asp-route-categoryId="@item.CategoryId"
-                                   class="btn btn-sm btn-edit" title="Chỉnh sửa">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a asp-action="DeleteCategory" asp-controller="Admin" asp-route-categoryId="@item.CategoryId"
-                                   class="btn btn-sm btn-delete" title="Xóa"
-                                   onclick="return confirm('Bạn có chắc muốn xóa danh mục này?');">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Thêm danh mục mới</h5>
+                <form asp-action="CreateCategory" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                    <!-- Validation -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                
+                    <div class="mb-3">
+                        <label asp-for="CategoryName" class="form-label">Tên danh mục</label>
+                        <input asp-for="CategoryName" type="text" class="form-control"
+                               placeholder="Vd: Bánh Chocolate" />
+                        <span asp-validation-for="CategoryName" class="text-danger"></span>
                     </div>
-                    <div class="category-stats">
-                        <div class="stat">
-                            <span class="stat-number">@item.TotalProducts</span>
-                            <span class="stat-label">Sản phẩm</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">@item.TotalSold</span>
-                            <span class="stat-label">Đã bán</span>
-                        </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" rows="4"
+                                  placeholder="Mô tả danh mục..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
-                </div>
-            </div>
-        }
-    }
-    else
-    {
-        <div class="col-12">
-            <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <p>Không có danh mục nào</p>
+                
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Thêm danh mục</button>
+                        <a asp-controller="Admin" asp-action="CategoryList" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
             </div>
         </div>
-    }
+    </div>
 </div>
 
 <style>
@@ -150,5 +131,17 @@
     .empty-state p {
         color: #999;
         font-size: 16px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+    }
+
+    .card-title {
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
     }
 </style>

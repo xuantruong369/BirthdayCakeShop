@@ -76,13 +76,92 @@ namespace Presentation.Controllers
 
         public async Task<IActionResult> CategoryList()
         {
-            var categories = await _categoryService.GetCategorys();
+            var categories = await _categoryService.GetAdminCategorys();
             List<CategoryMenuView> categoryMenuViews = categories.Select(item => new CategoryMenuView
             {
                 CategoryId = item.CategoryId,
-                CategoryName = item.CategoryName
+                CategoryName = item.CategoryName,
+                Description = item.Description,
+                TotalProducts = item.TotalProducts,
+                TotalSold = item.TotalSold
             }).ToList();
             return View(categoryMenuViews);
+        }
+
+        [HttpGet]
+        public IActionResult CreateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(CreateEditCategory create)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(create);
+            }
+
+            await _categoryService.Add(new GetCategoryDTO
+            {
+                CategoryName = create.CategoryName,
+                Description = create.Description
+            });
+            return RedirectToAction("CategoryList");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCategory(CreateEditCategory edit)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(edit);
+            }
+
+            await _categoryService.Update(new GetCategoryDTO
+            {
+                CategoryId = edit.CategoryId,
+                CategoryName = edit.CategoryName,
+                Description = edit.Description
+            });
+            return RedirectToAction("CategoryList");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditCategory(int categoryId)
+        {
+            var category = await _categoryService.GetCategoryById(categoryId);
+            var categories = new CreateEditCategory
+            {
+                CategoryId = category.CategoryId,
+                CategoryName = category.CategoryName,
+                Description = category.Description
+            };
+            return View(categories);
+        }
+
+
+        public async Task<IActionResult> DeleteCategory(int categoryId)
+        {
+            try
+            {
+                await _categoryService.Delete(categoryId);
+                TempData["Success"] = "Xóa thành công";
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    ModelState.AddModelError("", "Không thể xóa sản phẩm này vì nó đang nằm trong giỏ hàng của khách hàng.");
+                    // Hoặc dùng TempData để hiển thị thông báo ra View
+                    TempData["Error"] = "Xóa thất bại: Sản phẩm này đang có dữ liệu liên quan (giỏ hàng/đơn hàng).";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Đã xảy ra lỗi hệ thống khi xóa. Vui lòng thử lại.");
+                }
+            }
+            return RedirectToAction("CategoryList");
         }
 
         public async Task<IActionResult> CustomerList()
@@ -241,8 +320,6 @@ namespace Presentation.Controllers
 
         public async Task<IActionResult> DeleteProduct(int productId)
         {
-
-
             try
             {
                 await _productService.DeleteProduct(productId);
