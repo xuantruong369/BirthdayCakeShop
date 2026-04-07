@@ -166,25 +166,56 @@ namespace Presentation.Controllers
 
         public async Task<IActionResult> CustomerList()
         {
-            var c = await _customerService.GetCustomers();
+            var c = await _customerService.GetAdminCustomers();
 
-            List<CustomerView> customers = c.Select(c => new CustomerView
+            List<CustomerView> customers = c.getCustomerDTOs.Select(item => new CustomerView
             {
-                CustomerId = c.CustomerId,
-                UserId = c.UserId,
-                CustomerName = c.CustomerName,
-                Phone = c.Phone,
-                BirthDate = c.BirthDate,
-                Address = c.Address,
-                Avatar = c.Avatar,
-                CustomerType = c.CustomerType,
-                Username = c.Username,
-                PasswordHash = c.PasswordHash,
-                Role = c.Role,
-                CreatedAt = c.CreatedAt
+                CustomerId = item.CustomerId,
+                UserId = item.UserId,
+                CustomerName = item.CustomerName,
+                Phone = item.Phone,
+                BirthDate = item.BirthDate,
+                Address = item.Address,
+                Avatar = item.Avatar,
+                CustomerType = item.CustomerType,
+                Username = item.Username,
+                PasswordHash = item.PasswordHash,
+                Role = item.Role,
+                CreatedAt = item.CreatedAt
             }).ToList();
 
-            return View(customers);
+            var adminCustomers = new AdminGetCustomers
+            {
+                customerViews = customers,
+                TotalCustomers = c.TotalCustomers,
+                TotalNewCustomers = c.TotalNewCustomers,
+                TotalTypeCustomers = c.TotalTypeCustomers
+            };
+            return View(adminCustomers);
+        }
+
+        public async Task<IActionResult> DeleteCustomer(int cutomerId)
+        {
+            try
+            {
+                await _customerService.DeleteAdminCustomer(cutomerId);
+                TempData["Success"] = "Xóa thành công";
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    ModelState.AddModelError("", "Không thể xóa sản phẩm này vì nó đang nằm trong giỏ hàng của khách hàng.");
+                    // Hoặc dùng TempData để hiển thị thông báo ra View
+                    TempData["Error"] = "Xóa thất bại: Sản phẩm này đang có dữ liệu liên quan (giỏ hàng/đơn hàng).";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Đã xảy ra lỗi hệ thống khi xóa. Vui lòng thử lại.");
+                }
+            }
+            return RedirectToAction("CustomerList");
+
         }
 
         public IActionResult Dashboard()

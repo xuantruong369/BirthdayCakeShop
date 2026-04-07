@@ -9,6 +9,27 @@ namespace DataAccess.Repositories
     {
         public CustomerRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
+        public async Task DeleteCutomer(int cusotmerId)
+        {
+            var customer = await _context.Customers
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.CustomerId == cusotmerId);
+
+            if (customer == null)
+            {
+                return;
+            }
+
+            if (customer.User != null)
+            {
+                _context.Users.Remove(customer.User);
+            }
+
+
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Customer>> GetAllCustomers()
         {
             return await _context.Customers

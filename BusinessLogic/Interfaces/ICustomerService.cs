@@ -9,5 +9,7 @@ namespace BusinessLogic.Interfaces
         Task<bool> UpdateCustomer(int customerId, AddCustomerDTO addCustomerDTO);
         Task<bool> DeleteCustomer(int customerId);
         Task<IEnumerable<GetCustomerDTO>> GetCustomers();
+        Task<AdminCustomerDTO> GetAdminCustomers();
+        Task DeleteAdminCustomer(int customerId);
     }
 }

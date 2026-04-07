@@ -7,5 +7,7 @@ namespace DataAccess.Interfaces
         Task<Customer?> GetByUserId(int? userId);
         Task<Customer?> GetCustomerById(int? Id);
         Task<IEnumerable<Customer>> GetAllCustomers();
+        Task DeleteCutomer(int cusotmerId);
+
     }
 }

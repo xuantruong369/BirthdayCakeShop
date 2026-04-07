@@ -128,5 +128,39 @@ namespace BusinessLogic.Services
                 throw new Exception("Lỗi khi xóa khách hàng: " + ex.Message);
             }
         }
+
+        public async Task<AdminCustomerDTO> GetAdminCustomers()
+        {
+            var c = await _customerRepo.GetAllCustomers();
+            List<GetCustomerDTO> customers = c.Select(item => new GetCustomerDTO
+            {
+                CustomerId = item.CustomerId,
+                UserId = item.UserId,
+                CustomerName = item.CustomerName,
+                Phone = item.Phone,
+                BirthDate = item.BirthDate,
+                Address = item.Address,
+                Avatar = item.Avatar,
+                CustomerType = item.CustomerType,
+                Username = item.User.Username,
+                PasswordHash = item.User.PasswordHash,
+                Role = item.User.Role,
+                CreatedAt = item.User.CreatedAt
+            }).ToList();
+            var now = DateTime.Now;
+            var customerresult = new AdminCustomerDTO
+            {
+                getCustomerDTOs = customers,
+                TotalCustomers = c.Count(),
+                TotalTypeCustomers = c.Count(p => p.CustomerType == "Vip"),
+                TotalNewCustomers = c.Count(p => p.User.CreatedAt?.Month == now.Month && p.User.CreatedAt?.Year == now.Year)
+            };
+            return customerresult;
+        }
+
+        public async Task DeleteAdminCustomer(int customerId)
+        {
+            await _customerRepo.DeleteCutomer(customerId);
+        }
     }
 }
