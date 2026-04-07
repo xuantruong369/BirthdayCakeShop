@@ -37,15 +37,26 @@ namespace BusinessLogic.Services
 
         public async Task EditVoucher(VoucherItemDTO edit)
         {
-            await _voucherRepo.Update(new Voucher
+            var voucher = await _voucherRepo.GetById(edit.VoucherId);
+            if (voucher != null)
             {
-                VoucherId = edit.VoucherId,
-                VoucherCode = edit.VoucherCode,
-                DiscountValue = edit.DiscountValue,
-                IsPercentage = edit.IsPercentage,
-                StartDate = edit.StartDate,
-                EndDate = edit.EndDate
-            });
+                voucher.VoucherCode = edit.VoucherCode;
+                voucher.DiscountValue = edit.DiscountValue;
+                voucher.IsPercentage = edit.IsPercentage;
+                voucher.StartDate = edit.StartDate;
+                voucher.EndDate = edit.EndDate;
+
+                await _voucherRepo.Update(voucher);
+            }
+            // await _voucherRepo.Update(new Voucher
+            // {
+            //     VoucherId = edit.VoucherId,
+            //     VoucherCode = edit.VoucherCode,
+            //     DiscountValue = edit.DiscountValue,
+            //     IsPercentage = edit.IsPercentage,
+            //     StartDate = edit.StartDate,
+            //     EndDate = edit.EndDate
+            // });
         }
 
         public async Task<VoucherDTO> GetAllVouchers()

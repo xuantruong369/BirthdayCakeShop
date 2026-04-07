@@ -52,12 +52,19 @@ namespace BusinessLogic.Services
         }
         public async Task Update(GetCategoryDTO getCategoryDTO)
         {
-            await _categoryRepo.Update(new CakeCategory
+            var categories = await _categoryRepo.GetById(getCategoryDTO.CategoryId);
+            if (categories != null)
             {
-                CategoryId = getCategoryDTO.CategoryId,
-                CategoryName = getCategoryDTO.CategoryName,
-                Description = getCategoryDTO.Description
-            });
+                categories.CategoryName = getCategoryDTO.CategoryName;
+                categories.Description = getCategoryDTO.Description;
+                await _categoryRepo.Update(categories);
+            }
+            // await _categoryRepo.Update(new CakeCategory
+            // {
+            //     CategoryId = getCategoryDTO.CategoryId,
+            //     CategoryName = getCategoryDTO.CategoryName,
+            //     Description = getCategoryDTO.Description
+            // });
         }
 
         public async Task Delete(int id)

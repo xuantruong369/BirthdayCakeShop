@@ -127,9 +127,9 @@
                             </td>
                             <td>
                                 <div class="table-actions">
-                                    <button class="btn btn-sm btn-edit" title="Chỉnh sửa">
+                                    <a asp-controller="Admin" asp-action="EditProduct" asp-route-productId="@item.ProductId" class="btn btn-sm btn-edit" title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                     @* <button class="btn btn-sm btn-view" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
                                     </button> *@

@@ -1,8 +1,9 @@
+
 using BusinessLogic.DTOs;
 using BusinessLogic.Interfaces;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
-using Microsoft.VisualBasic;
+
 
 namespace BusinessLogic.Services
 {
@@ -58,17 +59,45 @@ namespace BusinessLogic.Services
             var products = await _productRepo.GetAllAdminProducts();
             List<GetAdProductDTO> adProducts = products.Select(item => new GetAdProductDTO
             {
+                // ProductId = item.ProductId,
+                // Name = item.ProductName,
+                // ImageUrl = item.Thumbnail,
+                // Price = item.ProductDetails.Min(p => p.Price),
+                // ShortDescription = item.Description,
+                // CategoryName = item.Category.CategoryName,
+                // CreatedAt = item.CreatedAt,
+                // CategoryId = item.CategoryId,
+                // Stock = item.ProductDetails.Min(p => p.Stock)
                 ProductId = item.ProductId,
                 Name = item.ProductName,
                 ImageUrl = item.Thumbnail,
-                Price = item.ProductDetails.Min(p => p.Price),
+                Price = item.ProductDetails.FirstOrDefault().Price,
                 ShortDescription = item.Description,
                 CategoryName = item.Category.CategoryName,
                 CreatedAt = item.CreatedAt,
                 CategoryId = item.CategoryId,
-                Stock = item.ProductDetails.Min(p => p.Stock)
+                Stock = item.ProductDetails.FirstOrDefault().Stock
             }).ToList();
             return adProducts;
+        }
+
+        public async Task<AdminProductDTO> GetAllProductById(int productId)
+        {
+            var product = await _productRepo.GetProductById(productId);
+            List<string?> imagesProductDetail = product.ProductImages.Select(item => item.ImageUrl).ToList();
+
+            return new AdminProductDTO
+            {
+                ProductId = product.ProductId,
+                CategoryId = product.CategoryId,
+                ProductName = product.ProductName,
+                Description = product.Description,
+                Thumbnail = product.Thumbnail,
+                Images = imagesProductDetail,
+                Price = product.ProductDetails.FirstOrDefault().Price,
+                CakeSize = product.ProductDetails.FirstOrDefault().CakeSize,
+                Flavor = product.ProductDetails.FirstOrDefault().Flavor
+            };
         }
 
         public async Task<IEnumerable<ProductListDTO>> GetByCategoryId(int id)
@@ -76,9 +105,13 @@ namespace BusinessLogic.Services
             var products = await _productRepo.GetByCategory(id);
             List<ProductListDTO> productListDTOs = products.Select(item => new ProductListDTO
             {
+                // Id = item.ProductId,
+                // Name = item.ProductName,
+                // Price = item.ProductDetails.Min(p => p.Price),
+                // ImageUrl = item.Thumbnail
                 Id = item.ProductId,
                 Name = item.ProductName,
-                Price = item.ProductDetails.Min(p => p.Price),
+                Price = item.ProductDetails.FirstOrDefault().Price,
                 ImageUrl = item.Thumbnail
             }).ToList();
             return productListDTOs;
@@ -116,11 +149,59 @@ namespace BusinessLogic.Services
 
             return products.Select(p => new ProductListDTO
             {
+                // Id = p.ProductId,
+                // Name = p.ProductName,
+                // Price = p.ProductDetails.Min(d => d.Price),
+                // ImageUrl = p.Thumbnail
                 Id = p.ProductId,
                 Name = p.ProductName,
-                Price = p.ProductDetails.Min(d => d.Price),
+                Price = p.ProductDetails.FirstOrDefault().Price,
                 ImageUrl = p.Thumbnail
             });
+        }
+
+        public async Task UpdateAllProduct(AdminProductDTO edit)
+        {
+            var product = await _productRepo.GetProductById(edit.ProductId);
+            if (product != null)
+            {
+                product.ProductName = edit.ProductName;
+                product.Description = edit.Description;
+                product.Thumbnail = edit.Thumbnail;
+                product.CategoryId = edit.CategoryId;
+
+                await _productRepo.Update(product);
+            }
+
+            var productDetail = await _productDetailRepo.GetHeadProductDetailByProductId(edit.ProductId);
+            if (productDetail != null)
+            {
+                productDetail.Price = edit.Price;
+                productDetail.CakeSize = edit.CakeSize;
+                productDetail.Flavor = edit.Flavor;
+                await _productDetailRepo.Update(productDetail);
+            }
+
+            var productImages = await _productImageRepo.GetByProduct(edit.ProductId);
+            if (productImages != null)
+            {
+                foreach (var item in productImages)
+                {
+                    await _productImageRepo.Delete(item.ImageId);
+                }
+            }
+            if (edit.Images != null)
+            {
+                foreach (var item in edit.Images)
+                {
+                    await _productImageRepo.Add(new ProductImage
+                    {
+                        ProductId = edit.ProductId,
+                        ImageUrl = item
+                    });
+                }
+            }
+
         }
     }
 }

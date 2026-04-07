@@ -11,6 +11,7 @@ namespace BusinessLogic.Interfaces
         Task<IEnumerable<GetAdProductDTO>> GetAdProducts();
         Task DeleteProduct(int productId);
         Task<IEnumerable<ProductListDTO>> GetByCategoryId(int id);
-
+        Task<AdminProductDTO> GetAllProductById(int productId);
+        Task UpdateAllProduct(AdminProductDTO edit);
     }
 }

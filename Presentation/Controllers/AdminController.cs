@@ -465,6 +465,137 @@ namespace Presentation.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditProduct(int productId)
+        {
+            // var categories = await _categoryService.GetCategorys();
+
+            // var vm = new CreateProduct
+            // {
+            //     Categories = categories.Select(c => new SelectListItem
+            //     {
+            //         Value = c.CategoryId.ToString(),
+            //         Text = c.CategoryName
+            //     }).ToList()
+            // };
+
+            var categories = await _categoryService.GetCategorys();
+            var product = await _productService.GetAllProductById(productId);
+            var vm = new EditProduct
+            {
+                ProductId = product.ProductId,
+                CategoryId = product.CategoryId,
+                ProductName = product.ProductName,
+                Description = product.Description,
+                Price = product.Price,
+                CakeSize = product.CakeSize,
+                Flavor = product.Flavor,
+                Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.CategoryName
+                }).ToList()
+
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProduct(EditProduct model)
+        {
+            var categories = await _categoryService.GetCategorys();
+            model.Categories = categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.CategoryName
+            }).ToList();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            if (model.Thumbnail == null || model.Thumbnail.Length == 0)
+            {
+                ModelState.AddModelError("Thumbnail", "Vui lòng chọn ảnh thumbnail");
+                return View(model);
+            }
+
+            if (model.Images == null || !model.Images.Any())
+            {
+                ModelState.AddModelError("Images", "Vui lòng chọn ít nhất 1 ảnh chi tiết");
+                return View(model);
+            }
+
+
+            // ===== Lưu 1 ảnh thumbnail =====
+            var thumbnailFolder = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "Client",
+                "img",
+                "product"
+            );
+
+            if (!Directory.Exists(thumbnailFolder))
+            {
+                Directory.CreateDirectory(thumbnailFolder);
+            }
+
+            string thumbnailFileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Thumbnail.FileName);
+            var thumbnailPath = Path.Combine(thumbnailFolder, thumbnailFileName);
+
+            using (var stream = new FileStream(thumbnailPath, FileMode.Create))
+            {
+                await model.Thumbnail.CopyToAsync(stream);
+            }
+
+            // ===== Lưu nhiều ảnh detail =====
+            var detailFolder = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "Client",
+                "img",
+                "product",
+                "details"
+            );
+
+            if (!Directory.Exists(detailFolder))
+            {
+                Directory.CreateDirectory(detailFolder);
+            }
+
+            List<string> images = new List<string>();
+
+            foreach (var file in model.Images)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(detailFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                images.Add(fileName);
+            }
+
+            await _productService.UpdateAllProduct(new AdminProductDTO
+            {
+                ProductId = model.ProductId,
+                CategoryId = model.CategoryId,
+                ProductName = model.ProductName,
+                Description = model.Description,
+                Thumbnail = thumbnailFileName,
+                Images = images,
+                Price = model.Price,
+                CakeSize = model.CakeSize,
+                Flavor = model.Flavor
+            });
+
+            return RedirectToAction("Index");
+        }
+
         public IActionResult GetProducts()
         {
             return View();
