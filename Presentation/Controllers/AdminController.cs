@@ -255,6 +255,106 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        public IActionResult CreateVoucher()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateVoucher(CreateEditVoucher create)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(create);
+            }
+
+            var isExist = await _voucherService.CheckVoucherCodeExist(create.VoucherCode);
+            if (isExist)
+            {
+                // "VoucherCode" phải trùng khớp với tên thuộc tính trong Model để hiện lỗi đúng chỗ
+                ModelState.AddModelError("VoucherCode", "Mã voucher này đã tồn tại trong hệ thống.");
+                return View(create);
+            }
+            await _voucherService.AddVoucher(new VoucherItemDTO
+            {
+                VoucherCode = create.VoucherCode,
+                DiscountValue = create.DiscountValue,
+                IsPercentage = create.IsPercentage,
+                StartDate = create.StartDate,
+                EndDate = create.EndDate
+            });
+            return RedirectToAction("VoucherList");
+        }
+
+        public async Task<IActionResult> DeleteVoucher(int voucherId)
+        {
+            try
+            {
+                await _voucherService.DeleteVoucher(voucherId);
+                TempData["Success"] = "Xóa thành công";
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    ModelState.AddModelError("", "Không thể xóa sản phẩm này vì nó đang nằm trong giỏ hàng của khách hàng.");
+                    // Hoặc dùng TempData để hiển thị thông báo ra View
+                    TempData["Error"] = "Xóa thất bại: Sản phẩm này đang có dữ liệu liên quan (giỏ hàng/đơn hàng).";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Đã xảy ra lỗi hệ thống khi xóa. Vui lòng thử lại.");
+                }
+            }
+            return RedirectToAction("VoucherList");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditVoucher(CreateEditVoucher edit)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(edit);
+            }
+
+            var isExist = await _voucherService.CheckVoucherCodeExist(edit.VoucherCode);
+            if (isExist)
+            {
+                // "VoucherCode" phải trùng khớp với tên thuộc tính trong Model để hiện lỗi đúng chỗ
+                ModelState.AddModelError("VoucherCode", "Mã voucher này đã tồn tại trong hệ thống.");
+                return View(edit);
+            }
+
+            await _voucherService.EditVoucher(new VoucherItemDTO
+            {
+                VoucherId = edit.VoucherId,
+                VoucherCode = edit.VoucherCode,
+                DiscountValue = edit.DiscountValue,
+                IsPercentage = edit.IsPercentage,
+                StartDate = edit.StartDate,
+                EndDate = edit.EndDate
+            });
+            return RedirectToAction("VoucherList");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditVoucher(int voucherId)
+        {
+            var voucher = await _voucherService.GetVoucherById(voucherId);
+            var voucherEdit = new CreateEditVoucher
+            {
+                VoucherId = voucher.VoucherId,
+                VoucherCode = voucher.VoucherCode,
+                DiscountValue = voucher.DiscountValue,
+                IsPercentage = voucher.IsPercentage,
+                StartDate = voucher.StartDate,
+                EndDate = voucher.EndDate
+            };
+            return View(voucherEdit);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> CreateProduct()
         {
             var categories = await _categoryService.GetCategorys();

@@ -6,5 +6,6 @@ namespace DataAccess.Interfaces
     {
         Task<Voucher?> GetByCode(string code);
         Task<IEnumerable<Voucher>> GetAllVouchers();
+        Task<bool> CheckVoucherCodeExist(string voucherCode);
     }
 }

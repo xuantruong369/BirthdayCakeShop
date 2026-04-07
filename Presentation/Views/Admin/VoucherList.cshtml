@@ -21,9 +21,9 @@
         <h1 class="page-title">Quản lý voucher</h1>
         <p class="page-subtitle">Tạo và quản lý mã giảm giá cho khách hàng</p>
     </div>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVoucherModal">
+    <a asp-controller="Admin" asp-action="CreateVoucher" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tạo voucher
-    </button>
+    </a>
 </div>
 
 <!-- Quick Stats -->
@@ -122,162 +122,22 @@
                         <td><span class="badge bg-success">@item.strIsActive</span></td>
                         <td>
                             <div class="table-actions">
-                                <button class="btn btn-sm btn-edit" title="Chỉnh sửa" data-bs-toggle="modal"
-                                        data-bs-target="#editVoucherModal">
+                                <a asp-controller="Admin" asp-action="EditVoucher" asp-route-voucherId="@item.VoucherId"
+                                       class="btn btn-sm btn-edit" title="Chỉnh sửa">
                                     <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-delete" title="Xóa">
+                                </a>
+                                <a asp-controller="Admin" asp-action="DeleteVoucher" asp-route-voucherId="@item.VoucherId"
+                                       class="btn btn-sm btn-delete" title="Xóa">
                                     <i class="fas fa-trash"></i>
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>
                 }
-              
-                @* <tr>
-                    <td><strong>WELCOME50K</strong></td>
-                    <td>Voucher chào mừng</td>
-                    <td><span class="badge bg-warning">Cố định</span></td>
-                    <td>50.000 đ</td>
-                    <td>120/150</td>
-                    <td>2024-05-31</td>
-                    <td><span class="badge bg-success">Hoạt động</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-delete" title="Xóa">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>OLDCODE2023</strong></td>
-                    <td>Mã cũ</td>
-                    <td><span class="badge bg-info">Phần trăm</span></td>
-                    <td>10%</td>
-                    <td>250/250</td>
-                    <td>2023-12-31</td>
-                    <td><span class="badge bg-danger">Hết hạn</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-delete" title="Xóa">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr> *@
             </tbody>
         </table>
     </div>
 </div>
-
-<!-- Add Voucher Modal -->
-<div class="modal fade" id="addVoucherModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tạo voucher mới</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Mã voucher</label>
-                        <input type="text" class="form-control" placeholder="Vd: SUMMER2024" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tên voucher</label>
-                        <input type="text" class="form-control" placeholder="Vd: Khuyến mãi hè" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Loại</label>
-                        <select class="form-control">
-                            <option>Phần trăm (%)</option>
-                            <option>Số tiền cố định (đ)</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Giá trị</label>
-                        <input type="number" class="form-control" placeholder="Vd: 20" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Số lần dùng tối đa</label>
-                        <input type="number" class="form-control" placeholder="Vd: 100" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Ngày hết hạn</label>
-                        <input type="date" class="form-control" />
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary">Tạo voucher</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Voucher Modal -->
-<div class="modal fade" id="editVoucherModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chỉnh sửa voucher</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Mã voucher</label>
-                        <input type="text" class="form-control" value="SUMMER2024" disabled />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tên voucher</label>
-                        <input type="text" class="form-control" value="Khuyến mãi hè" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Giá trị</label>
-                        <input type="number" class="form-control" value="20" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Số lần dùng tối đa</label>
-                        <input type="number" class="form-control" value="100" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Ngày hết hạn</label>
-                        <input type="date" class="form-control" value="2024-06-30" />
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary">Lưu thay đổi</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Pagination -->
-<nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center">
-        <li class="page-item">
-            <a class="page-link" href="#">Trước</a>
-        </li>
-        <li class="page-item active">
-            <a class="page-link" href="#">1</a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="#">Tiếp</a>
-        </li>
-    </ul>
-</nav>
 
 <style>
     .stat-card {

@@ -25,6 +25,11 @@ namespace BusinessLogic.Services
             });
         }
 
+        public Task<bool> CheckVoucherCodeExist(string voucherCode)
+        {
+            return _voucherRepo.CheckVoucherCodeExist(voucherCode);
+        }
+
         public async Task DeleteVoucher(int voucherId)
         {
             await _voucherRepo.Delete(voucherId);
@@ -63,6 +68,20 @@ namespace BusinessLogic.Services
                 TotalVoucherNoActive = vouchers.Count(p => p.EndDate < now)
             };
             return voucherDto;
+        }
+
+        public async Task<VoucherItemDTO> GetVoucherById(int voucherId)
+        {
+            var voucher = await _voucherRepo.GetById(voucherId);
+            return new VoucherItemDTO
+            {
+                VoucherId = voucher.VoucherId,
+                VoucherCode = voucher.VoucherCode,
+                DiscountValue = voucher.DiscountValue,
+                IsPercentage = voucher.IsPercentage,
+                StartDate = voucher.StartDate,
+                EndDate = voucher.EndDate
+            };
         }
     }
 }

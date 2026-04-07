@@ -9,6 +9,16 @@ namespace DataAccess.Repositories
     {
         public VoucherRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
+        public async Task<bool> CheckVoucherCodeExist(string voucherCode)
+        {
+            if (string.IsNullOrWhiteSpace(voucherCode)) return false;
+            // Sử dụng AnyAsync để kiểm tra sự tồn tại (hiệu năng tốt hơn tải dữ liệu về)
+            // Dùng ToUpper() để kiểm tra không phân biệt chữ hoa chữ thường
+            return await _context.Vouchers
+                .AnyAsync(v => v.VoucherCode.ToUpper() == voucherCode.Trim().ToUpper());
+
+        }
+
         public async Task<IEnumerable<Voucher>> GetAllVouchers()
         {
             return await _context.Vouchers

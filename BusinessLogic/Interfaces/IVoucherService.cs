@@ -8,5 +8,7 @@ namespace BusinessLogic.Interfaces
         Task AddVoucher(VoucherItemDTO add);
         Task EditVoucher(VoucherItemDTO edit);
         Task DeleteVoucher(int voucherId);
+        Task<bool> CheckVoucherCodeExist(string voucherCode);
+        Task<VoucherItemDTO> GetVoucherById(int voucherId);
     }
 }
