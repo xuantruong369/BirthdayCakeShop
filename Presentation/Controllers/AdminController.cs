@@ -16,13 +16,15 @@ namespace Presentation.Controllers
         private readonly IProductService _productService;
         private readonly IOrderService _orderService;
         private readonly ICustomerService _customerService;
+        private readonly IVoucherService _voucherService;
 
-        public AdminController(ICategoryService categoryService, IProductService productService, IOrderService orderService, ICustomerService customerService)
+        public AdminController(ICategoryService categoryService, IProductService productService, IOrderService orderService, ICustomerService customerService, IVoucherService voucherService)
         {
             _categoryService = categoryService;
             _productService = productService;
             _orderService = orderService;
             _customerService = customerService;
+            _voucherService = voucherService;
         }
         public async Task<IActionResult> OrderList()
         {
@@ -228,9 +230,28 @@ namespace Presentation.Controllers
             return View();
         }
 
-        public IActionResult VoucherList()
+        public async Task<IActionResult> VoucherList()
         {
-            return View();
+            var vouchers = await _voucherService.GetAllVouchers();
+            List<AdminGetVoucherItem> voucheritem = vouchers.voucherItemDTOs.Select(item => new AdminGetVoucherItem
+            {
+                VoucherId = item.VoucherId,
+                VoucherCode = item.VoucherCode,
+                DiscountValue = item.DiscountValue,
+                IsPercentage = item.IsPercentage,
+                StartDate = item.StartDate,
+                EndDate = item.EndDate,
+                strIsPercentage = (item.IsPercentage == true) ? "Số tiền cố định" : "Phần trăm",
+                strIsActive = (item.EndDate >= DateTime.Now) ? "Hoạt động" : "Hết hạn"
+            }).ToList();
+
+            var voucherView = new AdminGetVouchers
+            {
+                adminGetVoucherItems = voucheritem,
+                TotalVoucherActive = vouchers.TotalVoucherActive,
+                TotalVoucherNoActive = vouchers.TotalVoucherNoActive
+            };
+            return View(voucherView);
         }
 
         [HttpGet]
@@ -407,5 +428,7 @@ namespace Presentation.Controllers
                 });
             }
         }
+
+
     }
 }

@@ -1,5 +1,5 @@
 @using Presentation.ViewModels
-@model List<dynamic>
+@model AdminGetVouchers
 
 @{
     ViewData["Title"] = "Quản lý voucher";
@@ -35,7 +35,7 @@
             </div>
             <div class="stat-info">
                 <p class="stat-label">Voucher hoạt động</p>
-                <h3 class="stat-value">18</h3>
+                <h3 class="stat-value">@Model.TotalVoucherActive</h3>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
             </div>
             <div class="stat-info">
                 <p class="stat-label">Voucher hết hạn</p>
-                <h3 class="stat-value">5</h3>
+                <h3 class="stat-value">@Model.TotalVoucherNoActive</h3>
             </div>
         </div>
     </div>
@@ -111,26 +111,29 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><strong>SUMMER2024</strong></td>
-                    @* <td>Khuyến mãi hè</td> *@
-                    <td><span class="badge bg-info">Phần trăm</span></td>
-                    <td>20%</td>
-                    @* <td>45/100</td> *@
-                    <td>2024-06-30</td>
-                    <td><span class="badge bg-success">Hoạt động</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="btn btn-sm btn-edit" title="Chỉnh sửa" data-bs-toggle="modal"
-                                    data-bs-target="#editVoucherModal">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-delete" title="Xóa">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                
+                @foreach (var item in Model.adminGetVoucherItems)
+                {
+                    <tr>
+                        <td><strong>@item.VoucherCode</strong></td>
+                        <td><span class="badge bg-info">@item.strIsPercentage</span></td>
+                        <td>@item.DiscountValue</td>
+                        <td>@item.EndDate?.ToString("dd/MM/yyyy")</td>
+                        <td><span class="badge bg-success">@item.strIsActive</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-sm btn-edit" title="Chỉnh sửa" data-bs-toggle="modal"
+                                        data-bs-target="#editVoucherModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-delete" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+              
                 @* <tr>
                     <td><strong>WELCOME50K</strong></td>
                     <td>Voucher chào mừng</td>
