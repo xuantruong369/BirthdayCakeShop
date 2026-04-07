@@ -9,6 +9,13 @@ namespace DataAccess.Repositories
     {
         public VoucherRepository(BirthdayCakeShopDbContext context) : base(context) { }
 
+        public async Task<IEnumerable<Voucher>> GetAllVouchers()
+        {
+            return await _context.Vouchers
+                .Include(p => p.Orders)
+                .ToListAsync();
+        }
+
         public async Task<Voucher?> GetByCode(string code)
         {
             return await _context.Vouchers
