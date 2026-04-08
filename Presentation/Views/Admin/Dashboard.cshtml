@@ -1,7 +1,10 @@
+@using Presentation.ViewModels
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_LayoutUnified.cshtml";
 }
+
+@model AdminDashboard
 
 @section Breadcrumb {
     <nav aria-label="breadcrumb">
@@ -33,14 +36,14 @@
             <div class="metric-header">
                 <div>
                     <div class="metric-label">Tổng đơn hàng</div>
-                    <div class="metric-value">1,234</div>
+                    <div class="metric-value">@Model.TotalOrderByMonth</div>
                 </div>
                 <div class="metric-icon">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
             </div>
             <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i> 12% so với tháng trước
+                <i class="fas fa-arrow-up"></i> @Model.TotalOrderVSLastMonth so với tháng trước
             </div>
         </div>
     </div>
@@ -51,14 +54,14 @@
             <div class="metric-header">
                 <div>
                     <div class="metric-label">Tổng doanh thu</div>
-                    <div class="metric-value">45.6M</div>
+                    <div class="metric-value">@Utils.FormatNumber(@Model.TotalRevenueByMonth)</div>
                 </div>
                 <div class="metric-icon" style="background-color: #d4edda; color: var(--success-color);">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
             </div>
             <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i> 8.5% so với tháng trước
+                <i class="fas fa-arrow-up"></i>@Utils.FormatNumber(@Model.TotalRevenueVSLastMonth) so với tháng trước
             </div>
         </div>
     </div>
@@ -69,14 +72,14 @@
             <div class="metric-header">
                 <div>
                     <div class="metric-label">Tổng sản phẩm</div>
-                    <div class="metric-value">156</div>
+                    <div class="metric-value">@Model.TotalProduct</div>
                 </div>
                 <div class="metric-icon" style="background-color: #e3f2fd; color: var(--info-color);">
                     <i class="fas fa-box"></i>
                 </div>
             </div>
             <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i> 5 sản phẩm mới
+                <i class="fas fa-arrow-up"></i> @Model.TotalNewProductByMonth sản phẩm mới
             </div>
         </div>
     </div>
@@ -87,14 +90,14 @@
             <div class="metric-header">
                 <div>
                     <div class="metric-label">Khách hàng</div>
-                    <div class="metric-value">892</div>
+                    <div class="metric-value">@Model.TotalCustomer</div>
                 </div>
                 <div class="metric-icon" style="background-color: #fce4ec; color: #e91e63;">
                     <i class="fas fa-users"></i>
                 </div>
             </div>
             <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i> 23 khách mới
+                <i class="fas fa-arrow-up"></i> @Model.TotalNewCustomerByMonth khách mới
             </div>
         </div>
     </div>
@@ -208,51 +211,26 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Mã đơn</th>
                                 <th>Khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Địa chỉ</th>
+                                <th>Phương thức thanh toán</th>
                                 <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày đặt</th>
-                                <th>Hành động</th>
+                                <th>Ngày giao</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>#12345</strong></td>
-                                <td>Nguyễn Văn A</td>
-                                <td>890,000 VNĐ</td>
-                                <td><span class="badge badge-success">Hoàn thành</span></td>
-                                <td>2024-04-04</td>
-                                <td>
-                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#12344</strong></td>
-                                <td>Trần Thị B</td>
-                                <td>1,200,000 VNĐ</td>
-                                <td><span class="badge badge-warning">Đang xử lý</span></td>
-                                <td>2024-04-03</td>
-                                <td>
-                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#12343</strong></td>
-                                <td>Lê Văn C</td>
-                                <td>650,000 VNĐ</td>
-                                <td><span class="badge badge-danger">Đã hủy</span></td>
-                                <td>2024-04-02</td>
-                                <td>
-                                    <button class="btn btn-sm btn-view" title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            @foreach (var item in Model.AdminOrderListDashes)
+                            {
+                                <tr>
+                                    <td><strong>@item.CustomerFullName</strong></td>
+                                    <td>@item.Phone</td>
+                                    <td>@item.DeliveryAddress</td>
+                                    <td><span class="badge badge-success">@item.PaymentMethod</span></td>
+                                    <td>@string.Format("{0:N0}", @item.TotalAmount) VNĐ</td>
+                                    <td>@item.DeliveryDate?.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -315,7 +293,7 @@
     labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
     datasets: [{
     label: 'Doanh thu (VNĐ)',
-    data: [2.5, 3.1, 2.8, 4.2, 3.8, 4.5, 5.2, 6.1, 5.8, 6.5, 5.9, 6.2],
+    data: [@Utils.ScaleToK(@Model.TotalOrderByEveryMonth[0]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[1]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[2]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[3]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[4]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[5]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[6]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[7]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[8]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[9]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[10]), @Utils.ScaleToK(@Model.TotalOrderByEveryMonth[11])],
     borderColor: '#d4a574',
     backgroundColor: 'rgba(212, 165, 116, 0.1)',
     borderWidth: 2,
@@ -340,7 +318,7 @@
     beginAtZero: true,
     ticks: {
     callback: function (value) {
-    return value.toFixed(1) + 'M';
+    return value.toFixed(1) + 'K';
     }
     }
     }

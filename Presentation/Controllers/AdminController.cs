@@ -17,14 +17,16 @@ namespace Presentation.Controllers
         private readonly IOrderService _orderService;
         private readonly ICustomerService _customerService;
         private readonly IVoucherService _voucherService;
+        private readonly IDashboardService _dashboardService;
 
-        public AdminController(ICategoryService categoryService, IProductService productService, IOrderService orderService, ICustomerService customerService, IVoucherService voucherService)
+        public AdminController(ICategoryService categoryService, IProductService productService, IOrderService orderService, ICustomerService customerService, IVoucherService voucherService, IDashboardService dashboardService)
         {
             _categoryService = categoryService;
             _productService = productService;
             _orderService = orderService;
             _customerService = customerService;
             _voucherService = voucherService;
+            _dashboardService = dashboardService;
         }
         public async Task<IActionResult> OrderList()
         {
@@ -220,9 +222,34 @@ namespace Presentation.Controllers
 
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            var dash = await _dashboardService.GetDashboard();
+            var orders = await _orderService.GetOrders();
+            List<AdminOrderListDash> adminOrderList = orders.Select(item => new AdminOrderListDash
+            {
+                OrderId = item.OrderId,
+                CustomerFullName = item.CustomerFullName,
+                Phone = item.Phone,
+                TotalAmount = item.TotalAmount,
+                PaymentMethod = item.PaymentMethod,
+                DeliveryAddress = item.DeliveryAddress,
+                DeliveryDate = item.DeliveryDate
+            }).ToList();
+            var dashboard = new AdminDashboard
+            {
+                TotalOrderByMonth = dash.TotalOrderByMonth,
+                TotalOrderVSLastMonth = dash.TotalOrderVSLastMonth,
+                TotalRevenueByMonth = dash.TotalRevenueByMonth,
+                TotalRevenueVSLastMonth = dash.TotalRevenueVSLastMonth,
+                TotalProduct = dash.TotalProduct,
+                TotalNewProductByMonth = dash.TotalNewProductByMonth,
+                TotalCustomer = dash.TotalCustomer,
+                TotalNewCustomerByMonth = dash.TotalNewCustomerByMonth,
+                TotalOrderByEveryMonth = dash.TotalOrderByEveryMonth,
+                AdminOrderListDashes = adminOrderList
+            };
+            return View(dashboard);
         }
 
         public IActionResult Reports()
