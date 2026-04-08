@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Models;
+using Presentation.Models.Authentication;
 using Presentation.ViewModels;
 
 namespace Presentation.Controllers
 {
+    [Authentication]
     public class AdminController : Controller
     {
         private readonly ICategoryService _categoryService;
