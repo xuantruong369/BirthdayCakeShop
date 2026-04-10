@@ -11,5 +11,6 @@ namespace BusinessLogic.Interfaces
         Task<IEnumerable<GetCustomerDTO>> GetCustomers();
         Task<AdminCustomerDTO> GetAdminCustomers();
         Task DeleteAdminCustomer(int customerId);
+        Task<(IEnumerable<GetCustomerDTO> items, int total)> SearchAdCustomers(string search, string sex, string orderStatus, int page = 1, int pageSize = 10);
     }
 }

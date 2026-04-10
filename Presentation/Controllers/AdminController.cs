@@ -61,6 +61,8 @@ namespace Presentation.Controllers
         public async Task<IActionResult> Index()
         {
             var products = await _productService.GetAdProducts();
+            var categories = await _categoryService.GetCategorys();
+
             List<AdminGetProducts> productViews = products.Select(item => new AdminGetProducts
             {
                 ProductId = item.ProductId,
@@ -72,6 +74,8 @@ namespace Presentation.Controllers
                 Price = item.Price,
                 Stock = item.Stock
             }).ToList();
+
+            ViewBag.Categories = categories;
             return View(productViews);
         }
 
@@ -689,6 +693,129 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SearchProducts(string search = "", int? categoryId = null, decimal? minPrice = null, decimal? maxPrice = null, int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var (products, total) = await _productService.SearchAdProducts(search, categoryId, minPrice, maxPrice, page, pageSize);
+
+                var productList = products.Select(item => new
+                {
+                    item.ProductId,
+                    item.Name,
+                    Thumbnail = item.ImageUrl,
+                    item.CreatedAt,
+                    item.CategoryId,
+                    item.CategoryName,
+                    item.Price,
+                    item.Stock
+                }).ToList();
+
+                int totalPages = (int)Math.Ceiling((double)total / pageSize);
+
+                return Json(new
+                {
+                    success = true,
+                    items = productList,
+                    totalCount = total,
+                    currentPage = page,
+                    totalPages = totalPages,
+                    pageSize = pageSize
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Có lỗi khi tìm kiếm: " + ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchCustomers(string search = "", int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var (customers, total) = await _customerService.SearchAdCustomers(search, "", "", page, pageSize);
+
+                var customerList = customers.Select(item => new
+                {
+                    item.CustomerId,
+                    item.Username,
+                    item.CustomerName,
+                    item.Phone,
+                    item.Address,
+                    item.Avatar,
+                    item.CustomerType,
+                    item.Role,
+                    BirthDate = item.BirthDate?.ToString("dd/MM/yyyy") ?? "N/A",
+                    CreatedAt = item.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A"
+                }).ToList();
+
+                int totalPages = (int)Math.Ceiling((double)total / pageSize);
+
+                return Json(new
+                {
+                    success = true,
+                    items = customerList,
+                    totalCount = total,
+                    currentPage = page,
+                    totalPages = totalPages,
+                    pageSize = pageSize
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Có lỗi khi tìm kiếm: " + ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchVouchers(string search = "", string status = "", string type = "", int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var (vouchers, total) = await _voucherService.SearchAdVouchers(search, status, type, page, pageSize);
+                var now = DateTime.Now;
+
+                var voucherList = vouchers.Select(item => new
+                {
+                    item.VoucherId,
+                    item.VoucherCode,
+                    item.DiscountValue,
+                    strIsPercentage = item.IsPercentage == true ? "Phần trăm" : "Số tiền cố định",
+                    EndDate = item.EndDate?.ToString("dd/MM/yyyy") ?? "N/A",
+                    strIsActive = item.EndDate >= now ? "Hoạt động" : "Hết hạn"
+                }).ToList();
+
+                int totalPages = (int)Math.Ceiling((double)total / pageSize);
+
+                return Json(new
+                {
+                    success = true,
+                    items = voucherList,
+                    totalCount = total,
+                    currentPage = page,
+                    totalPages = totalPages,
+                    pageSize = pageSize
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Có lỗi khi tìm kiếm: " + ex.Message
+                });
+            }
+        }
 
     }
 }

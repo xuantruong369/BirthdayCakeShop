@@ -41,9 +41,13 @@
             <div class="col-md-3">
                 <select class="form-control" id="categoryFilter">
                     <option value="">Tất cả danh mục</option>
-                    <option value="chocolate">Bánh Chocolate</option>
-                    <option value="vanilla">Bánh Vanilla</option>
-                    <option value="custom">Bánh Custom</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryId">@category.CategoryName</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="col-md-3">
@@ -245,6 +249,10 @@
 </style>
 
 <script>
+    let currentPage = 1;
+    let currentPageSize = 10;
+    const pageSize = 10;
+
     document.addEventListener('DOMContentLoaded', function () {
         // Toggle between table and grid view
         const toggleViewBtn = document.getElementById('toggleView');
@@ -292,28 +300,219 @@
             checkbox.addEventListener('change', updateBatchActions);
         });
 
-        // Search functionality
+        // ===== SERVER-SIDE SEARCH =====
         const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('keyup', function () {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#productsTable tbody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(filter) ? '' : 'none';
+        const categoryFilter = document.getElementById('categoryFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const resetFilterBtn = document.getElementById('resetFilter');
+
+        // Hàm gọi API search từ server
+        async function performSearch(page = 1) {
+            const search = searchInput.value.trim();
+            const categoryId = categoryFilter.value || null;
+            const priceRange = priceFilter.value;
+
+            let minPrice = null, maxPrice = null;
+            if (priceRange === '0-500') {
+                minPrice = 0;
+                maxPrice = 500000;
+            } else if (priceRange === '500-1000') {
+                minPrice = 500000;
+                maxPrice = 1000000;
+            } else if (priceRange === '1000+') {
+                minPrice = 1000000;
+            }
+
+            try {
+                const response = await fetch(`/Admin/SearchProducts?search=${encodeURIComponent(search)}&categoryId=${categoryId || ''}&minPrice=${minPrice || ''}&maxPrice=${maxPrice || ''}&page=${page}&pageSize=${pageSize}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    updateProductTable(data.items);
+                    updatePagination(data.currentPage, data.totalPages);
+                    currentPage = data.currentPage;
+                } else {
+                    console.error('Lỗi tìm kiếm:', data.message);
+                    alert('Lỗi: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Lỗi:', error);
+                alert('Có lỗi xảy ra khi tìm kiếm');
+            }
+        }
+
+        // Cập nhật bảng sản phẩm
+        function updateProductTable(products) {
+            const tbody = document.querySelector('#productsTable tbody');
+            tbody.innerHTML = '';
+
+            if (!products || products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><p class="text-muted mb-0">Không có sản phẩm nào</p></td></tr>';
+                updateGridView(products);
+                return;
+            }
+
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.id = `product-${product.productId}`;
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="form-check-input product-checkbox" value="${product.productId}" />
+                    </td>
+                    <td>
+                        <img src="/Client/img/product/${product.thumbnail}" alt="${product.name}"
+                             class="product-thumbnail"
+                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                    </td>
+                    <td>
+                        <strong>${product.name}</strong>
+                        <br />
+                        <small class="text-muted">${product.categoryName}</small>
+                    </td>
+                    <td>
+                        <span class="badge badge-primary">${product.categoryName}</span>
+                    </td>
+                    <td>
+                        <strong>${product.price.toLocaleString('vi-VN')}</strong> VNĐ
+                    </td>
+                    <td>
+                        <span class="badge badge-info">${product.stock}</span>
+                    </td>
+                    <td>
+                        <small>${new Date(product.createdAt).toLocaleDateString('vi-VN')}</small>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="/Admin/EditProduct?productId=${product.productId}" class="btn btn-sm btn-edit" title="Chỉnh sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="/Admin/DeleteProduct?productId=${product.productId}" 
+                               class="btn btn-sm btn-delete"
+                               onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
+
+            // Re-attach event listeners cho checkbox
+            document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateBatchActions);
+            });
+
+            // Cập nhật grid view
+            updateGridView(products);
+        }
+
+        // Cập nhật grid view
+        function updateGridView(products) {
+            const gridView = document.getElementById('gridView');
+            gridView.innerHTML = '<div class="grid">';
+
+            if (!products || products.length === 0) {
+                gridView.innerHTML += '</div>';
+                return;
+            }
+
+            products.forEach(product => {
+                gridView.innerHTML += `
+                    <div class="card product-grid-item">
+                        <div style="position: relative; overflow: hidden; height: 200px; background: var(--light-color);">
+                            <img src="/Client/img/product/${product.thumbnail}" alt="${product.name}"
+                                 style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" />
+                            <input type="checkbox" class="form-check-input product-checkbox" value="${product.productId}"
+                                   style="position: absolute; top: 10px; left: 10px;" />
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="text-muted small">${product.categoryName}</p>
+                            <p class="text-primary fw-bold">${product.price.toLocaleString('vi-VN')} VNĐ</p>
+                            <div class="d-flex gap-2">
+                                <a href="/Admin/EditProduct?productId=${product.productId}"
+                                   class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-edit"></i> Chỉnh sửa
+                                </a>
+                                <a href="/Admin/DeleteProduct?productId=${product.productId}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Bạn có chắc muốn xóa?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            gridView.innerHTML += '</div>';
+        }
+
+        // Cập nhật pagination
+        function updatePagination(currentPage, totalPages) {
+            const paginationNav = document.querySelector('.pagination');
+            paginationNav.innerHTML = '';
+
+            // Nút Trước
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">Trước</a>`;
+            paginationNav.appendChild(prevLi);
+
+            // Các trang
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>`;
+                paginationNav.appendChild(li);
+            }
+
+            // Nút Tiếp
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">Tiếp</a>`;
+            paginationNav.appendChild(nextLi);
+        }
+
+        // Event listener cho search
+        let searchTimeout;
+        searchInput.addEventListener('keyup', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                performSearch(1);
+            }, 300); // Delay 300ms để tránh quá nhiều request
         });
 
-        // Reset filters
-        document.getElementById('resetFilter').addEventListener('click', function () {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('categoryFilter').value = '';
-            document.getElementById('priceFilter').value = '';
-            document.querySelectorAll('#productsTable tbody tr').forEach(row => {
-                row.style.display = '';
-            });
+        // Event listener cho category filter
+        categoryFilter.addEventListener('change', function () {
+            currentPage = 1;
+            performSearch(1);
         });
+
+        // Event listener cho price filter
+        priceFilter.addEventListener('change', function () {
+            currentPage = 1;
+            performSearch(1);
+        });
+
+        // Reset filter
+        resetFilterBtn.addEventListener('click', function () {
+            searchInput.value = '';
+            categoryFilter.value = '';
+            priceFilter.value = '';
+            currentPage = 1;
+            performSearch(1);
+        });
+
+        // Hàm đổi trang
+        window.changePage = function (page) {
+            if (page < 1) page = 1;
+            currentPage = page;
+            performSearch(page);
+        };
     });
 
+    // ===== BATCH DELETE (giữ nguyên) =====
     @* function batchDelete() {
         const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
         if (checkedBoxes.length === 0) {
@@ -362,7 +561,7 @@
 
             const ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
 
-            fetch('/Admin/DeleteMultiple', {   // nhớ đúng Controller của bạn
+            fetch('/Admin/DeleteMultiple', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -398,6 +597,6 @@
             alert('Vui lòng chọn sản phẩm để chỉnh sửa');
             return;
         }
-        showToast('Chức năng chỉnh sửa hàng loạt sẽ sớm ra mắt', 'info');
+        alert('Chức năng chỉnh sửa hàng loạt sẽ sớm ra mắt');
     }
 </script>

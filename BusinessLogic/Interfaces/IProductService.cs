@@ -13,5 +13,6 @@ namespace BusinessLogic.Interfaces
         Task<IEnumerable<ProductListDTO>> GetByCategoryId(int id);
         Task<AdminProductDTO> GetAllProductById(int productId);
         Task UpdateAllProduct(AdminProductDTO edit);
+        Task<(IEnumerable<GetAdProductDTO> items, int total)> SearchAdProducts(string search, int? categoryId, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 10);
     }
 }

@@ -10,5 +10,6 @@ namespace BusinessLogic.Interfaces
         Task DeleteVoucher(int voucherId);
         Task<bool> CheckVoucherCodeExist(string voucherCode);
         Task<VoucherItemDTO> GetVoucherById(int voucherId);
+        Task<(IEnumerable<VoucherItemDTO> items, int total)> SearchAdVouchers(string search, string status, string type, int page = 1, int pageSize = 10);
     }
 }

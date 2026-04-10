@@ -203,5 +203,58 @@ namespace BusinessLogic.Services
             }
 
         }
+
+        public async Task<(IEnumerable<GetAdProductDTO> items, int total)> SearchAdProducts(string search, int? categoryId, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 10)
+        {
+            var products = await _productRepo.GetAllAdminProducts();
+
+            // Áp dụng filter theo search keyword
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                products = products.Where(p => p.ProductName.ToLower().Contains(search.ToLower()) ||
+                                               p.Description.ToLower().Contains(search.ToLower())).ToList();
+            }
+
+            // Filter theo danh mục
+            if (categoryId.HasValue && categoryId > 0)
+            {
+                products = products.Where(p => p.CategoryId == categoryId).ToList();
+            }
+
+            // Filter theo giá
+            if (minPrice.HasValue)
+            {
+                products = products.Where(p => p.ProductDetails.FirstOrDefault()?.Price >= minPrice).ToList();
+            }
+            if (maxPrice.HasValue)
+            {
+                products = products.Where(p => p.ProductDetails.FirstOrDefault()?.Price <= maxPrice).ToList();
+            }
+
+            // Tổng số sản phẩm phù hợp
+            int totalCount = products.Count();
+
+            // Phân trang
+            var pagedProducts = products
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Map sang DTO
+            List<GetAdProductDTO> adProducts = pagedProducts.Select(item => new GetAdProductDTO
+            {
+                ProductId = item.ProductId,
+                Name = item.ProductName,
+                ImageUrl = item.Thumbnail,
+                Price = item.ProductDetails.FirstOrDefault()?.Price ?? 0,
+                ShortDescription = item.Description,
+                CategoryName = item.Category?.CategoryName,
+                CreatedAt = item.CreatedAt,
+                CategoryId = item.CategoryId,
+                Stock = item.ProductDetails.FirstOrDefault()?.Stock ?? 0
+            }).ToList();
+
+            return (adProducts, totalCount);
+        }
     }
 }

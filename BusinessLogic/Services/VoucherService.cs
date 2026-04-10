@@ -94,5 +94,69 @@ namespace BusinessLogic.Services
                 EndDate = voucher.EndDate
             };
         }
+
+        public async Task<(IEnumerable<VoucherItemDTO> items, int total)> SearchAdVouchers(string search, string status, string type, int page = 1, int pageSize = 10)
+        {
+            var vouchers = await _voucherRepo.GetAllVouchers();
+            var now = DateTime.Now;
+
+            // Filter theo search keyword (mã voucher)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                vouchers = vouchers.Where(v => v.VoucherCode.ToLower().Contains(search.ToLower())).ToList();
+            }
+
+            // Filter theo trạng thái
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                if (status == "active")
+                {
+                    vouchers = vouchers.Where(v => v.EndDate >= now).ToList();
+                }
+                else if (status == "inactive")
+                {
+                    vouchers = vouchers.Where(v => v.EndDate < now && v.StartDate <= now).ToList();
+                }
+                else if (status == "expired")
+                {
+                    vouchers = vouchers.Where(v => v.EndDate < now).ToList();
+                }
+            }
+
+            // Filter theo loại (phần trăm hoặc số tiền cố định)
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                if (type == "percentage")
+                {
+                    vouchers = vouchers.Where(v => v.IsPercentage == true).ToList();
+                }
+                else if (type == "fixed")
+                {
+                    vouchers = vouchers.Where(v => v.IsPercentage == false).ToList();
+                }
+            }
+
+            // Tổng số voucher phù hợp
+            int totalCount = vouchers.Count();
+
+            // Phân trang
+            var pagedVouchers = vouchers
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Map sang DTO
+            List<VoucherItemDTO> voucherDTOs = pagedVouchers.Select(item => new VoucherItemDTO
+            {
+                VoucherId = item.VoucherId,
+                VoucherCode = item.VoucherCode,
+                DiscountValue = item.DiscountValue,
+                IsPercentage = item.IsPercentage,
+                StartDate = item.StartDate,
+                EndDate = item.EndDate
+            }).ToList();
+
+            return (voucherDTOs, totalCount);
+        }
     }
 }

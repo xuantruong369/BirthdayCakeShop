@@ -74,7 +74,6 @@
                 <select class="form-control" id="statusFilter">
                     <option value="">Tất cả trạng thái</option>
                     <option value="active">Hoạt động</option>
-                    <option value="inactive">Không hoạt động</option>
                     <option value="expired">Hết hạn</option>
                 </select>
             </div>
@@ -194,3 +193,154 @@
         font-size: 0.85rem;
     }
 </style>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <a class="page-link" href="#" onclick="changePage(1); return false;">Trước</a>
+        </li>
+        <li class="page-item active">
+            <a class="page-link" href="#" onclick="changePage(1); return false;">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#" onclick="changePage(2); return false;">Tiếp</a>
+        </li>
+    </ul>
+</nav>
+
+<script>
+    let currentPage = 1;
+    const pageSize = 10;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // === SERVER-SIDE SEARCH ===
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const resetFilterBtn = document.getElementById('resetFilter');
+
+        // Hàm gọi API search từ server
+        async function performSearch(page = 1) {
+            const search = searchInput.value.trim();
+            const status = statusFilter.value || '';
+            const type = typeFilter.value || '';
+
+            try {
+                const response = await fetch(`/Admin/SearchVouchers?search=${encodeURIComponent(search)}&status=${status}&type=${type}&page=${page}&pageSize=${pageSize}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    updateVoucherTable(data.items);
+                    updatePagination(data.currentPage, data.totalPages);
+                    currentPage = data.currentPage;
+                } else {
+                    console.error('Lỗi tìm kiếm:', data.message);
+                    alert('Lỗi: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Lỗi:', error);
+                alert('Có lỗi xảy ra khi tìm kiếm');
+            }
+        }
+
+        // Cập nhật bảng voucher
+        function updateVoucherTable(vouchers) {
+            const tbody = document.querySelector('#vouchersTable tbody');
+            tbody.innerHTML = '';
+
+            if (!vouchers || vouchers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4"><p class="text-muted mb-0">Không có voucher nào</p></td></tr>';
+                return;
+            }
+
+            vouchers.forEach(voucher => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${voucher.voucherCode}</strong></td>
+                    <td><span class="badge bg-info">${voucher.strIsPercentage}</span></td>
+                    <td>${voucher.discountValue}</td>
+                    <td>${voucher.endDate}</td>
+                    <td><span class="badge bg-success">${voucher.strIsActive}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="/Admin/EditVoucher?voucherId=${voucher.voucherId}"
+                               class="btn btn-sm btn-edit" title="Chỉnh sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="/Admin/DeleteVoucher?voucherId=${voucher.voucherId}"
+                               class="btn btn-sm btn-delete" title="Xóa"
+                               onclick="return confirm('Bạn có chắc muốn xóa voucher này?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Cập nhật pagination
+        function updatePagination(currentPageNum, totalPages) {
+            const paginationNav = document.querySelector('.pagination');
+            paginationNav.innerHTML = '';
+
+            // Nút Trước
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPageNum === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPageNum - 1}); return false;">Trước</a>`;
+            paginationNav.appendChild(prevLi);
+
+            // Các trang
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPageNum ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>`;
+                paginationNav.appendChild(li);
+            }
+
+            // Nút Tiếp
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPageNum === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPageNum + 1}); return false;">Tiếp</a>`;
+            paginationNav.appendChild(nextLi);
+        }
+
+        // Event listener cho search
+        let searchTimeout;
+        searchInput.addEventListener('keyup', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                performSearch(1);
+            }, 300);
+        });
+
+        // Event listener cho filters
+        statusFilter.addEventListener('change', function () {
+            currentPage = 1;
+            performSearch(1);
+        });
+
+        typeFilter.addEventListener('change', function () {
+            currentPage = 1;
+            performSearch(1);
+        });
+
+        // Reset filter
+        resetFilterBtn.addEventListener('click', function () {
+            searchInput.value = '';
+            statusFilter.value = '';
+            typeFilter.value = '';
+            currentPage = 1;
+            performSearch(1);
+        });
+
+        // Hàm đổi trang (global)
+        window.changePage = function (page) {
+            if (page < 1) page = 1;
+            currentPage = page;
+            performSearch(page);
+        };
+    });
+</script>

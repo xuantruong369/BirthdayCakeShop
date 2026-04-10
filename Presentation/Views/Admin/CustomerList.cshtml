@@ -67,25 +67,10 @@
 <div class="card mb-4">
     <div class="card-body">
         <div class="row g-3">
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="searchInput"
-                       placeholder="Tìm theo tên, email hoặc SĐT..." />
+            <div class="col-md-9">
+                <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên khách hàng..." />
             </div>
             <div class="col-md-3">
-                <select class="form-control" id="sexFilter">
-                    <option value="">Tất cả giới tính</option>
-                    <option value="male">Nam</option>
-                    <option value="female">Nữ</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-control" id="orderFilter">
-                    <option value="">Tất cả khách</option>
-                    <option value="active">Khách hoạt động</option>
-                    <option value="inactive">Khách không hoạt động</option>
-                </select>
-            </div>
-            <div class="col-md-2">
                 <button class="btn btn-outline-secondary w-100" id="resetFilter">
                     <i class="fas fa-refresh"></i> Reset
                 </button>
@@ -318,25 +303,138 @@
     </style>
 
     <script>
+        let currentPage = 1;
         let currentCustomerId = null;
-        let currentCustomerData = null;
+        const pageSize = 10;
 
-        function showCustomerDetail(customerId) {
-            // Find customer in table
-            const rows = document.querySelectorAll('#customersTable tbody tr');
-            let customerData = null;
+        document.addEventListener('DOMContentLoaded', function () {
+            // === SERVER-SIDE SEARCH ===
+            const searchInput = document.getElementById('searchInput');
+            const resetFilterBtn = document.getElementById('resetFilter');
 
-            // Since we can't directly access model data from JavaScript, we'll populate from visible table cells
-            // This is a workaround - ideally you'd pass JSON data or call an API endpoint
-            rows.forEach(row => {
-                const username = row.querySelector('.customer-name strong')?.textContent;
-                // You could improve this by adding data attributes to rows
+            // Hàm gọi API search từ server
+            async function performSearch(page = 1) {
+                const search = searchInput.value.trim();
+
+                try {
+                    const response = await fetch(`/Admin/SearchCustomers?search=${encodeURIComponent(search)}&page=${page}&pageSize=${pageSize}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        updateCustomerTable(data.items);
+                        updatePagination(data.currentPage, data.totalPages, page);
+                        currentPage = data.currentPage;
+                    } else {
+                        console.error('Lỗi tìm kiếm:', data.message);
+                        alert('Lỗi: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Lỗi:', error);
+                    alert('Có lỗi xảy ra khi tìm kiếm');
+                }
+            }
+
+            // Cập nhật bảng khách hàng
+            function updateCustomerTable(customers) {
+                const tbody = document.querySelector('#customersTable tbody');
+                tbody.innerHTML = '';
+
+                if (!customers || customers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><p class="text-muted mb-0">Không có khách hàng nào</p></td></tr>';
+                    return;
+                }
+
+                customers.forEach(customer => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                                        <td>
+                                            <div class="customer-info">
+                                                <div class="customer-avatar">
+                                                    ${customer.avatar ? `<img src="/Client/img/${customer.avatar}" alt="${customer.username}">` : customer.username.substring(0, 1).toUpperCase()}
+                                                </div>
+                                                <div class="customer-name">
+                                                    <strong>${customer.username}</strong>
+                                                    <br />
+                                                    <small class="text-muted">${customer.role}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${customer.customerName || 'N/A'}</td>
+                                        <td>${customer.phone || 'N/A'}</td>
+                                        <td>${customer.address || 'N/A'}</td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                ${customer.customerType || 'Thành viên'}
+                                            </span>
+                                        </td>
+                                        <td>${customer.birthDate || 'N/A'}</td>
+                                        <td>${customer.createdAt || 'N/A'}</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="/Admin/DeleteCustomer?cutomerId=${customer.customerId}"
+                                                   class="btn btn-sm btn-delete" title="Xóa"
+                                                   onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            // Cập nhật pagination
+            function updatePagination(currentPageNum, totalPages) {
+                const paginationNav = document.querySelector('.pagination');
+                paginationNav.innerHTML = '';
+
+                // Nút Trước
+                const prevLi = document.createElement('li');
+                prevLi.className = `page-item ${currentPageNum === 1 ? 'disabled' : ''}`;
+                prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPageNum - 1}); return false;">Trước</a>`;
+                paginationNav.appendChild(prevLi);
+
+                // Các trang
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.className = `page-item ${i === currentPageNum ? 'active' : ''}`;
+                    li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>`;
+                    paginationNav.appendChild(li);
+                }
+
+                // Nút Tiếp
+                const nextLi = document.createElement('li');
+                nextLi.className = `page-item ${currentPageNum === totalPages ? 'disabled' : ''}`;
+                nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPageNum + 1}); return false;">Tiếp</a>`;
+                paginationNav.appendChild(nextLi);
+            }
+
+            // Event listener cho search
+            let searchTimeout;
+            searchInput.addEventListener('keyup', function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentPage = 1;
+                    performSearch(1);
+                }, 300);
             });
 
-            // For now, show a message that the detail modal should be populated server-side
-            // In a real scenario, you'd call an API or pass JSON data to the modal
-            showCustomerDetailFromData(customerId);
-        }
+            // Reset filter
+            resetFilterBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                currentPage = 1;
+                performSearch(1);
+            });
+
+            // Hàm đổi trang
+            window.changePage = function (page) {
+                if (page < 1) page = 1;
+                currentPage = page;
+                performSearch(page);
+            };
+        });
+
+        let currentCustomerData = null;
 
         function showCustomerDetailFromData(customerId) {
             // Call API to get customer details

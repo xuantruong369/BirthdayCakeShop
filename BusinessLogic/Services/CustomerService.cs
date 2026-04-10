@@ -162,5 +162,72 @@ namespace BusinessLogic.Services
         {
             await _customerRepo.DeleteCutomer(customerId);
         }
+
+        public async Task<(IEnumerable<GetCustomerDTO> items, int total)> SearchAdCustomers(string search, string sex, string orderStatus, int page = 1, int pageSize = 10)
+        {
+            var customers = await _customerRepo.GetAllCustomers();
+
+            // Filter theo search keyword (tên, email, SĐT)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                customers = customers.Where(c =>
+                    c.CustomerName.ToLower().Contains(search.ToLower()) ||
+                    c.Phone.Contains(search) ||
+                    c.User.Username.ToLower().Contains(search.ToLower())
+                ).ToList();
+            }
+
+            // Filter theo giới tính (sex)
+            if (!string.IsNullOrWhiteSpace(sex))
+            {
+                // Giả sử bạn có field sex hoặc bạn có thể lọc theo CustomerType
+                // Nếu không có, bỏ qua bước này hoặc thêm field sex vào entity
+                // customers = customers.Where(c => c.Sex == sex).ToList();
+            }
+
+            // Filter theo trạng thái hoạt động
+            if (!string.IsNullOrWhiteSpace(orderStatus))
+            {
+                if (orderStatus == "active")
+                {
+                    // Khách hàng có đơn hàng gần đây
+                    // Cần kiểm tra database của bạn có bảng Order không
+                    // Tạm thời bỏ qua
+                }
+                else if (orderStatus == "inactive")
+                {
+                    // Khách hàng không hoạt động
+                    // Tạm thời bỏ qua
+                }
+            }
+
+            // Tổng số khách hàng phù hợp
+            int totalCount = customers.Count();
+
+            // Phân trang
+            var pagedCustomers = customers
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Map sang DTO
+            List<GetCustomerDTO> customerDTOs = pagedCustomers.Select(item => new GetCustomerDTO
+            {
+                CustomerId = item.CustomerId,
+                UserId = item.UserId,
+                CustomerName = item.CustomerName,
+                Phone = item.Phone,
+                BirthDate = item.BirthDate,
+                Address = item.Address,
+                Avatar = item.Avatar,
+                CustomerType = item.CustomerType,
+                Username = item.User.Username,
+                PasswordHash = item.User.PasswordHash,
+                Role = item.User.Role,
+                CreatedAt = item.User.CreatedAt
+            }).ToList();
+
+            return (customerDTOs, totalCount);
+        }
     }
 }
